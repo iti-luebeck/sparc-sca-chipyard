@@ -1,0 +1,41 @@
+================================================================================
+Correlation Power Analysis (CPA) Attack - Gemmini MatMul
+================================================================================
+
+Configuration:
+  Matrix dimension: 4x4
+  Power metric: HD
+  Traces directory: /home/andrija/rackstation_home/CellIFT_traces/gemmini/walpp_tainted
+  Matrices directory: .
+
+Loading HD traces...
+  Loaded 100 traces
+
+Loading matrix header files from ....
+  Loaded 100 matrix pairs
+
+  Using 100 traces with matching matrices
+
+Starting CPA attack...
+  Attacking matrix B (16 bytes)
+
+  Progress: 0/16  Progress: 4/16  Progress: 8/16  Progress: 12/16
+================================================================================
+Attack Results
+================================================================================
+
+Recovered Matrix B:
+[[-128 -128 -128 -128]
+ [-128 -128 -128 -128]
+ [-128 -128 -128 -128]
+ [-128 -128 -128 -128]]
+
+Correlation Statistics:
+  Min:  0.0000
+  Max:  0.0000
+  Mean: 0.0000
+  Std:  0.0000
+
+Results written to: recovered_B.txt
+
+Done!

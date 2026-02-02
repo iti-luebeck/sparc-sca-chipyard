@@ -1,0 +1,357 @@
+================================================================================
+CellIFT Taint Propagation Analysis Report
+================================================================================
+
+Total tainted signals: 135
+Total tainted modules: 40
+
+--------------------------------------------------------------------------------
+TAINTED MODULES SUMMARY (sorted by number of tainted signals)
+--------------------------------------------------------------------------------
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh:
+  Tainted signals (11):
+    - RegShifted_r_6_0
+    - RegShifted_r_7_0
+    - RegShifted_r_8_0
+    - d_buf_0_0
+    - d_buf_1_0
+    - d_buf_2_0
+    - d_buf_3_0
+    - io_d_bits_0_0
+    - io_d_bits_1_0
+    - io_d_bits_2_0
+    - io_d_bits_3_0
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh:
+  Tainted signals (8):
+    - b_16_0
+    - b_20_0
+    - b_24_0
+    - b_28_0
+    - io_in_d_0_0
+    - io_in_d_1_0
+    - io_in_d_2_0
+    - io_in_d_3_0
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater:
+  Tainted signals (8):
+    - io_resp_bits_out_0
+    - io_resp_bits_out_1
+    - io_resp_bits_out_2
+    - io_resp_bits_out_3
+    - req_bits_in_0
+    - req_bits_in_1
+    - req_bits_in_2
+    - req_bits_in_3
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_1:
+  Tainted signals (6):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_3:
+  Tainted signals (6):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_0:
+  Tainted signals (6):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_2:
+  Tainted signals (6):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.pipe:
+  Tainted signals (4):
+    - io_out_bits_out_0
+    - io_out_bits_out_1
+    - io_out_bits_out_2
+    - io_out_bits_out_3
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem:
+  Tainted signals (4):
+    - RW0_rdata_0
+    - RW0_rdata_1
+    - RW0_rdata_2
+    - RW0_rdata_3
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm:
+  Tainted signals (4):
+    - io_req_bits_in_0
+    - io_req_bits_in_1
+    - io_req_bits_in_2
+    - io_req_bits_in_3
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.ex_read_pipe_p:
+  Tainted signals (4):
+    - io_out_bits_data
+    - stages_0_data
+    - stages_1_data
+    - stages_2_data
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_0_d_q:
+  Tainted signals (3):
+    - io_enq_bits_data
+    - ram_data[0]
+    - ram_data[1]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_1_1.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_0_2.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_2_1.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_1_0.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_1_2.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_2_3.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer_2.bundleIn_0_d_q:
+  Tainted signals (3):
+    - io_enq_bits_data
+    - ram_data[0]
+    - ram_data[1]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_0_3.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer_1.bundleIn_0_d_q:
+  Tainted signals (3):
+    - io_deq_bits_data
+    - ram_data[0]
+    - ram_data[1]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_0_0.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_1_3.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_2_2.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_2_0.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_0_1.tile_0_0:
+  Tainted signals (3):
+    - c2
+    - io_in_d
+    - io_out_c
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer.bundleIn_0_d_q:
+  Tainted signals (2):
+    - ram_data[0]
+    - ram_data[1]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_3_3.tile_0_0:
+  Tainted signals (2):
+    - c2
+    - io_in_d
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_3_1.tile_0_0:
+  Tainted signals (2):
+    - c2
+    - io_in_d
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_3_0.tile_0_0:
+  Tainted signals (2):
+    - c2
+    - io_in_d
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller.mesh.mesh.mesh_3_2.tile_0_0:
+  Tainted signals (2):
+    - c2
+    - io_in_d
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.ex_controller:
+  Tainted signals (2):
+    - dataA_unpadded
+    - dataD_unpadded
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm_1:
+  Tainted signals (2):
+    - io_req_bits_in_0
+    - io_req_bits_in_1
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.reader.beatPacker:
+  Tainted signals (2):
+    - buffer
+    - io_out_bits_data
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.q:
+  Tainted signals (2):
+    - io_deq_bits_data
+    - io_enq_bits_data
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext:
+  Tainted signals (1):
+    - RW0_wdata
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.reader.core:
+  Tainted signals (1):
+    - io_beatData_bits_data
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.subsystem_sbus.system_bus_xbar:
+  Tainted signals (1):
+    - auto_out_1_d_bits_data
+
+TOP.top_tiny_soc.i_sram:
+  Tainted signals (1):
+    - rdata_o[0]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.xbar:
+  Tainted signals (1):
+    - auto_out_d_bits_data
+
+--------------------------------------------------------------------------------
+TAINT PROPAGATION TIMELINE (first 50 signals)
+--------------------------------------------------------------------------------
+
+[Cycle 820]:
+  → TOP.top_tiny_soc.i_sram.rdata_o[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.subsystem_sbus.system_bus_xbar.auto_out_1_d_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_0_d_q.io_enq_bits_data
+
+[Cycle 825]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer_2.bundleIn_0_d_q.io_enq_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_0_d_q.ram_data[0]
+
+[Cycle 830]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.xbar.auto_out_d_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer_2.bundleIn_0_d_q.ram_data[0]
+
+[Cycle 835]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.reader.core.io_beatData_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer.bundleIn_0_d_q.ram_data[0]
+
+[Cycle 840]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.reader.beatPacker.io_out_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.reader.beatPacker.buffer
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.io_req_bits_in_0
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.io_req_bits_in_1
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.io_req_bits_in_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.io_req_bits_in_3
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm_1.io_req_bits_in_0
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm_1.io_req_bits_in_1
+
+[Cycle 845]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.pipe.io_out_bits_out_0
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.pipe.io_out_bits_out_1
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.pipe.io_out_bits_out_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.vsm.pipe.io_out_bits_out_3
+
+[Cycle 850]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.io_resp_bits_out_0
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.io_resp_bits_out_1
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.io_resp_bits_out_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.io_resp_bits_out_3
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.req_bits_in_0
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.req_bits_in_1
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.req_bits_in_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.mvin_scale_pixel_repeater.req_bits_in_3
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_0.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_1.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_2.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_3.RW0_wdata
+
+[Cycle 855]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_0.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_1.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_2.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_3.ram[4]
+
+[Cycle 865]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_0_d_q.ram_data[1]
+
+[Cycle 870]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer_2.bundleIn_0_d_q.ram_data[1]
+
+[Cycle 875]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.buffer.bundleIn_0_d_q.ram_data[1]
+
+[Cycle 895]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_0.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_1.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_2.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_3.ram[5]
+
+[Cycle 935]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_0.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_1.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_2.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_3.ram[6]
+
+[Cycle 975]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.gemmini.spad.spad_mems_0.mem.mem_ext.mem_0_0.ram[7]
+
+... and 85 more signals
+
+--------------------------------------------------------------------------------
+HARDWARE MODULE HIERARCHY WITH TAINT
+--------------------------------------------------------------------------------
+  TOP: 135 tainted signals
+  TOP.top_tiny_soc: 135 tainted signals
+  TOP.top_tiny_soc.i_mem_top: 134 tainted signals
+  TOP.top_tiny_soc.i_sram: 1 tainted signals

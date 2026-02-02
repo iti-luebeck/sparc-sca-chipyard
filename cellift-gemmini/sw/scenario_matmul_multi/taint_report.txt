@@ -1,0 +1,407 @@
+================================================================================
+CellIFT Taint Propagation Analysis Report
+================================================================================
+
+Total tainted signals: 134
+Total tainted modules: 27
+
+--------------------------------------------------------------------------------
+TAINTED MODULES SUMMARY (sorted by number of tainted signals)
+--------------------------------------------------------------------------------
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7:
+  Tainted signals (11):
+    - RW0_addr
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2:
+  Tainted signals (10):
+    - RW0_rdata
+    - RW0_wdata
+    - ram[0]
+    - ram[1]
+    - ram[2]
+    - ram[3]
+    - ram[4]
+    - ram[5]
+    - ram[6]
+    - ram[7]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu:
+  Tainted signals (9):
+    - in1_xor_in2
+    - in2_inv
+    - io_adder_out
+    - io_cmp_out
+    - io_in2
+    - io_out
+    - out
+    - shout_l
+    - slt
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw:
+  Tainted signals (7):
+    - ae
+    - invalid_paddr
+    - io_mem_resp_bits_data
+    - mem_resp_data
+    - res_v
+    - success
+    - traverse
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb:
+  Tainted signals (6):
+    - io_in_3_bits_addr
+    - io_in_4_bits_addr
+    - io_in_5_bits_addr
+    - io_in_6_bits_addr
+    - io_in_7_bits_idx
+    - io_out_bits_addr
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache:
+  Tainted signals (4):
+    - io_cpu_resp_bits_data_shifted
+    - io_cpu_resp_bits_data_shifted_1
+    - io_cpu_resp_bits_data_shifted_2
+    - io_cpu_resp_bits_data_zeroed_2
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.amoalu:
+  Tainted signals (3):
+    - adder_out
+    - io_out
+    - less
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.dataArb:
+  Tainted signals (3):
+    - io_in_3_bits_addr
+    - io_out_bits_addr
+    - io_out_bits_wdata
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_1_d_q:
+  Tainted signals (3):
+    - io_enq_bits_data
+    - ram_data[0]
+    - ram_data[1]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcacheArb:
+  Tainted signals (3):
+    - io_mem_req_bits_addr
+    - io_requestor_2_req_bits_addr
+    - io_requestor_2_resp_bits_data_word_bypass
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleOut_1_c_q:
+  Tainted signals (3):
+    - io_deq_bits_data
+    - ram_data[0]
+    - ram_data[1]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.tlMasterXbar:
+  Tainted signals (2):
+    - auto_out_c_bits_data
+    - auto_out_d_bits_data
+
+TOP.top_tiny_soc.i_sram:
+  Tainted signals (2):
+    - rdata_o[0]
+    - wdata_i[0]
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core:
+  Tainted signals (1):
+    - msb_2
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.subsystem_sbus.system_bus_xbar:
+  Tainted signals (1):
+    - auto_out_1_d_bits_data
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.div:
+  Tainted signals (1):
+    - io_req_bits_in2
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.frontend.icache.data_arrays_0.data_arrays_0_0_ext.mem_0_0:
+  Tainted signals (1):
+    - RW0_wdata
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext:
+  Tainted signals (1):
+    - RW0_rdata
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.frontend.icache.data_arrays_1.data_arrays_0_0_ext.mem_0_0:
+  Tainted signals (1):
+    - RW0_wdata
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.subsystem_mbus.subsystem_mbus_xbar:
+  Tainted signals (1):
+    - auto_out_a_bits_data
+
+TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.tag_array.tag_array_ext.mem_0_0:
+  Tainted signals (1):
+    - RW0_addr
+
+--------------------------------------------------------------------------------
+TAINT PROPAGATION TIMELINE (all signals)
+--------------------------------------------------------------------------------
+
+[Cycle 7430]:
+  → TOP.top_tiny_soc.i_sram.rdata_o[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.subsystem_sbus.system_bus_xbar.auto_out_1_d_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_1_d_q.io_enq_bits_data
+
+[Cycle 7435]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.tlMasterXbar.auto_out_d_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_1_d_q.ram_data[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.dataArb.io_out_bits_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.frontend.icache.data_arrays_0.data_arrays_0_0_ext.mem_0_0.RW0_wdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.frontend.icache.data_arrays_1.data_arrays_0_0_ext.mem_0_0.RW0_wdata
+
+[Cycle 7440]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleIn_1_d_q.ram_data[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[0]
+
+[Cycle 7445]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[1]
+
+[Cycle 7450]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[2]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[2]
+
+[Cycle 7455]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[3]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[3]
+
+[Cycle 7460]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[4]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[4]
+
+[Cycle 7465]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[5]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[5]
+
+[Cycle 7470]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[6]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[6]
+
+[Cycle 7475]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.ram[7]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.ram[7]
+
+[Cycle 8430]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_0.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_1.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_2.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_3.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_4.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_5.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_6.RW0_rdata
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.RW0_rdata
+
+[Cycle 8435]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.tlMasterXbar.auto_out_c_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.io_mem_resp_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcacheArb.io_requestor_2_resp_bits_data_word_bypass
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.io_cpu_resp_bits_data_shifted_1
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.io_cpu_resp_bits_data_shifted_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.io_cpu_resp_bits_data_shifted
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.io_cpu_resp_bits_data_zeroed_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.amoalu.adder_out
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.amoalu.less
+
+[Cycle 8440]:
+  → TOP.top_tiny_soc.i_sram.wdata_i[0]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleOut_1_c_q.io_deq_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.subsystem_mbus.subsystem_mbus_xbar.auto_out_a_bits_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleOut_1_c_q.ram_data[1]
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.mem_resp_data
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.res_v
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.success
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.traverse
+
+[Cycle 8445]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.buffer_1.bundleOut_1_c_q.ram_data[0]
+
+[Cycle 26820]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.amoalu.io_out
+
+[Cycle 26825]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.ae
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.ptw.invalid_paddr
+
+[Cycle 35575]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcacheArb.io_requestor_2_req_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcacheArb.io_mem_req_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.io_adder_out
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.io_cmp_out
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.io_in2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.msb_2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.in1_xor_in2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.in2_inv
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.io_out
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.out
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.shout_l
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.alu.slt
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.core.div.io_req_bits_in2
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb.io_in_6_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb.io_out_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.dataArb.io_in_3_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb.io_in_5_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb.io_in_3_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb.io_in_4_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.metaArb.io_in_7_bits_idx
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.tag_array.tag_array_ext.mem_0_0.RW0_addr
+
+[Cycle 35595]:
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.dataArb.io_out_bits_addr
+  → TOP.top_tiny_soc.i_mem_top.i_chip_top.system.tile_prci_domain.tile_reset_domain.tile.dcache.data.data_arrays_0.data_arrays_0_ext.mem_0_7.RW0_addr
+
+--------------------------------------------------------------------------------
+HARDWARE MODULE HIERARCHY WITH TAINT
+--------------------------------------------------------------------------------
+  TOP: 134 tainted signals
+  TOP.top_tiny_soc: 134 tainted signals
+  TOP.top_tiny_soc.i_mem_top: 132 tainted signals
+  TOP.top_tiny_soc.i_sram: 2 tainted signals

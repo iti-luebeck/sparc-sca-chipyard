@@ -1,0 +1,35 @@
+================================================================================
+CPA Attack - Gemmini MatMul (v2)
+================================================================================
+Traces: /home/andrija/rackstation_home/CellIFT_traces/gemmini/walpp_tainted
+Matrices: .
+Metric: HD
+Dimension: 4x4
+
+Loading traces...
+  Loaded 100 traces
+
+Loading matrix files...
+  Loaded 100 matrices
+
+Using 100 test cases
+
+Starting CPA attack...
+  Progress: 0/15  Progress: 4/15  Progress: 8/15  Progress: 12/15
+================================================================================
+Results
+================================================================================
+
+Recovered Matrix B:
+[[-102 -127 -122 -118]
+ [-101 -101  -88  -88]
+ [ -82 -127  -82 -123]
+ [-127 -127  -97  -83]]
+
+Correlation Statistics:
+  Min:  0.000000
+  Max:  0.156958
+  Mean: 0.049488
+  Std:  0.056202
+
+Results written to: recovered_B_v2.txt

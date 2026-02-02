@@ -15,9 +15,10 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Configuration
-NUM_VECTORS=100
+NUM_VECTORS=1000
 SIMLEN=70000
-TRACE_DIR="$SCRIPT_DIR/traces"
+#TRACE_DIR="$SCRIPT_DIR/traces"
+TRACE_DIR="/home/andrija/rackstation_home/CellIFT_traces/rocket_aes"
 BUILD_DIR="$SCRIPT_DIR/build"
 MAX_JOBS=$(nproc 2>/dev/null || echo 4)  # Default to number of CPU cores
 

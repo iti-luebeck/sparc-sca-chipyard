@@ -1,0 +1,19 @@
+# CellIFT SRAM Taint Initialization Data
+# Format: taint_group address size taint_mask
+#
+# This file specifies which memory addresses should be marked as tainted
+# when the simulation starts. The matrices are located in DRAM at these
+# addresses and are moved into the Gemmini scratchpad via DMA.
+#
+# For a 4x4 matrix of int8_t: 16 bytes
+# For a 4x4 matrix of int32_t: 64 bytes
+#
+# The DIM value can vary (4, 8, 16, etc.) so we mark a large region as tainted.
+# Maximum matrix size for DIM=16: 16x16 = 256 bytes (int8_t), 1024 bytes (int32_t)
+
+# Mark matrix A (input) as tainted - 1KB at 0x80001000
+# This address properly propagates taint through Gemmini DMA operations
+0 80001000 1024 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+
+# Note: Matrix B (weights) is NOT tainted - the computation depends on both inputs
+# but we're interested in tracking how matrix A's taint propagates through the system

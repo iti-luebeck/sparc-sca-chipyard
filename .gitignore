@@ -20,3 +20,8 @@ tags
 env-riscv-tools.sh
 env-esp-tools.sh
 .bsp/
+cellift-gemmini/sw/scenario_matmul_multi/matrix_*
+cellift-rocket/sw/scenario_aes128_multi/vector_*
+cellift-rocket/sw/scenario_aes128_multi/cpa_results_1000_all/
+cellift-rocket/sw/scenario_aes128_multi/cpa_results_1000
+/cellift-rocket/sw/scenario_aes128_multi/cpa_results_aligned_all_signals
