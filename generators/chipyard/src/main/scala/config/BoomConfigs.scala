@@ -5,7 +5,6 @@ import freechips.rocketchip.subsystem._
 
 import chipyard.config._
 
-import freechips.rocketchip.subsystem.WithBufferlessBroadcastHub
 
 // --------------
 // My config
@@ -79,9 +78,6 @@ class MySpecialConfig extends Config(
   // Configure DigitalSystem components
   //
 
-  // (see docs) If you want to reduce the resources used even further, you can configure the Broadcast Hub to use a bufferless design
-  new freechips.rocketchip.subsystem.WithBufferlessBroadcastHub ++
-
   // Remove the debug module completely.
   new chipyard.config.WithNoDebug ++
 
@@ -98,7 +94,7 @@ class MySpecialConfig extends Config(
   // new freechips.rocketchip.subsystem.WithJtagDTM ++              // set the debug module to expose a JTAG port
   // new freechips.rocketchip.subsystem.WithNoMMIOPort ++           // no top-level MMIO master port (overrides default set in rocketchip)
   new freechips.rocketchip.subsystem.WithNoSlavePort ++          // no top-level MMIO slave port (overrides default set in rocketchip)
-  // new freechips.rocketchip.subsystem.WithInclusiveCache ++       // use Sifive L2 cache
+  new freechips.rocketchip.subsystem.WithInclusiveCache(nBanks=1, nWays=4, capacityKB=64) ++ // minimal L2 cache (64 KB) - REQUIRED for Gemmini DMA
   new freechips.rocketchip.subsystem.WithNExtTopInterrupts(0) ++ // no external interrupts
   new chipyard.WithMulticlockCoherentBusTopology ++              // hierarchical buses including mbus+l2
   new freechips.rocketchip.system.BaseConfig                   // "base" rocketchip system

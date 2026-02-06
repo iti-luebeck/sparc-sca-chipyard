@@ -3,16 +3,21 @@
 Gemmini Matrix Multiplication Multi-Scenario Generator
 
 Generates:
-1. matrix_N.h - Header files with different DIMxDIM matrix pairs
-2. run_all_simulations.sh - Shell script to run all simulations
-3. Optionally builds all executables
+1. test_patterns/matrix_N.h - Header files with different DIMxDIM matrix pairs
+2. Optionally builds all executables
+
+For MinimalGemminiConfig (MySmallGemminiRocketConfig):
+- inputType: SInt(8.W)  -> int8_t, range [-128, 127]
+- accType: SInt(32.W)   -> int32_t for accumulator
+- 4x4 systolic array, weight-stationary dataflow
 
 Usage:
     python3 generate_scenario.py -n 10                    # Generate 10 matrix pairs
     python3 generate_scenario.py -n 10 --build            # Generate and build
     python3 generate_scenario.py -n 10 --dim 4            # 4x4 matrices (default)
-    python3 generate_scenario.py -n 10 --build --run      # Generate, build, and run all sims
-    python3 generate_scenario.py -n 10 --min-val 1 --max-val 10  # Bounded values
+    python3 generate_scenario.py -n 10 --min-val -32 --max-val 31  # Bounded signed values
+    python3 generate_scenario.py -n 10 --fixed-b          # Use same B matrix for all tests
+    python3 generate_scenario.py -n 10 --random-b         # Use random B matrix per test (default)
 """
 
 import argparse
@@ -23,8 +28,12 @@ import random
 from datetime import datetime
 
 
-def generate_random_matrix(dim, min_val=1, max_val=255, seed=None):
-    """Generate a random DIMxDIM matrix with values in [min_val, max_val]."""
+def generate_random_matrix(dim, min_val=-32, max_val=31, seed=None):
+    """Generate a random DIMxDIM matrix with signed int8 values in [min_val, max_val].
+    
+    Default range [-32, 31] is chosen to avoid accumulator overflow in 4x4 matmul.
+    Max possible value: 4 * 32 * 32 = 4096, well within int32_t range.
+    """
     if seed is not None:
         random.seed(seed)
     matrix = []
@@ -45,50 +54,75 @@ def matrix_multiply(A, B, dim):
 
 
 def matrix_to_c_array(matrix, indent=4, elem_type="int8_t"):
-    """Convert matrix to C array format."""
+    """Convert matrix to C array format with proper signed integer formatting."""
     dim = len(matrix)
     spaces = " " * indent
     lines = ["{"]
     for i, row in enumerate(matrix):
-        hex_vals = [f"0x{(v & 0xFF):02x}" if isinstance(v, int) and v >= 0 else f"{v}" for v in row]
-        row_str = ", ".join(hex_vals)
+        if elem_type == "int8_t":
+            # Format signed 8-bit values as decimal (clearer for signed values)
+            vals = [f"{v:4d}" for v in row]
+        else:
+            # int32_t: just use decimal
+            vals = [f"{v}" for v in row]
+        row_str = ", ".join(vals)
         comma = "," if i < dim - 1 else ""
         lines.append(f"{spaces}{{ {row_str} }}{comma}")
     lines.append("}")
     return "\n".join(lines)
 
 
-def matrix_to_single_line(matrix):
+def matrix_to_single_line(matrix, elem_type="int8_t"):
     """Convert matrix to single-line C array."""
-    dim = len(matrix)
     lines = []
     for row in matrix:
-        hex_vals = [f"0x{(v & 0xFF):02x}" if isinstance(v, int) and v >= 0 else f"{v}" for v in row]
-        lines.extend(hex_vals)
+        if elem_type == "int8_t":
+            vals = [f"{v}" for v in row]
+        else:
+            vals = [f"{v}" for v in row]
+        lines.extend(vals)
     return "{ " + ", ".join(lines) + " }"
 
 
-def generate_matrix_pairs(num_pairs, dim, min_val, max_val):
-    """Generate N matrix pairs with fixed B (secret) and varying A matrices.
+def generate_matrix_pairs(num_pairs, dim, min_val, max_val, fixed_b=False):
+    """Generate N matrix pairs with optional fixed B (secret) and varying A matrices.
     
-    This is useful for CPA attacks where B is the secret weight matrix
-    and A varies across test cases.
+    Args:
+        num_pairs: Number of test pairs to generate
+        dim: Matrix dimension
+        min_val: Minimum value for matrix elements
+        max_val: Maximum value for matrix elements
+        fixed_b: If True, use the same B matrix for all tests (useful for CPA attacks
+                 where B is the secret weight matrix). If False, generate random B per test.
     """
     pairs = []
-    # Generate a single fixed B matrix (the secret)
-    B = generate_random_matrix(dim, min_val, max_val, seed=999)
+    
+    # Generate a single fixed B matrix if requested
+    fixed_B = None
+    if fixed_b:
+        fixed_B = generate_random_matrix(dim, min_val, max_val, seed=999)
     
     for i in range(num_pairs):
         # Generate different A matrix for each test
         A = generate_random_matrix(dim, min_val, max_val, seed=i)
+        
+        # Use fixed B or generate random B
+        if fixed_b:
+            B = fixed_B
+        else:
+            B = generate_random_matrix(dim, min_val, max_val, seed=1000 + i)
+        
         C = matrix_multiply(A, B, dim)
         pairs.append((A, B, C))
     return pairs
 
 
-def generate_matrix_headers(pairs, dim, min_val, max_val):
-    """Generate individual header files for each matrix pair (matrix_0.h, matrix_1.h, etc.)."""
+def generate_matrix_headers(pairs, dim, min_val, max_val, output_dir="test_patterns"):
+    """Generate individual header files for each matrix pair in the output directory."""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Create output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
     
     for i, (A, B, C) in enumerate(pairs):
         header = f'''/**
@@ -122,212 +156,10 @@ static const int32_t test_expected_C[DIM][DIM] =
 
 #endif /* MATRIX_{i}_H */
 '''
-        with open(f"matrix_{i}.h", 'w') as f:
+        output_path = os.path.join(output_dir, f"matrix_{i}.h")
+        with open(output_path, 'w') as f:
             f.write(header)
-        print(f"Generated matrix_{i}.h")
-
-
-def generate_run_script(num_pairs, dim, cellift_gemmini_dir):
-    """Generate run_all_simulations.sh script."""
-    script = f'''#!/bin/bash
-#
-# Run all Gemmini matrix multiplication simulations in parallel
-# Auto-generated by generate_scenario.py
-#
-# Usage:
-#   ./run_all_simulations.sh                    # Run all vanilla sims
-#   ./run_all_simulations.sh --cellift          # Run all CellIFT sims  
-#   ./run_all_simulations.sh --single 5         # Run only test 5
-#   ./run_all_simulations.sh --range 0 9        # Run tests 0-9
-#   ./run_all_simulations.sh --simlen 200000    # Custom cycle count
-#   ./run_all_simulations.sh --jobs 8           # Run 8 simulations in parallel
-
-# Get script directory
-SCRIPT_DIR="$(cd "$(dirname "${{BASH_SOURCE[0]}}")" && pwd)"
-
-# Configuration
-NUM_TESTS={num_pairs}
-DIM={dim}
-SIMLEN=200000
-TRACE_DIR="$SCRIPT_DIR/traces"
-BUILD_DIR="$SCRIPT_DIR/build"
-MAX_JOBS=$(nproc 2>/dev/null || echo 4)  # Default to number of CPU cores
-
-# CellIFT Taint Initialization - marks matrix A as tainted
-SIMSRAMTAINT="$SCRIPT_DIR/sram_taint_data.txt"
-
-# Paths to simulators (from cellift-gemmini)
-CELLIFT_GEMMINI_DIR="{cellift_gemmini_dir}"
-VANILLA_SIM="$CELLIFT_GEMMINI_DIR/build/run_vanilla_trace_0.1/default-verilator/Vtop_tiny_soc"
-CELLIFT_SIM="$CELLIFT_GEMMINI_DIR/build/run_cellift_trace_0.1/default-verilator/Vtop_tiny_soc"
-
-# Colors
-RED='\\033[0;31m'
-GREEN='\\033[0;32m'
-YELLOW='\\033[1;33m'
-NC='\\033[0m'
-
-# Temporary directory for job status
-STATUS_DIR=$(mktemp -d)
-trap "rm -rf $STATUS_DIR" EXIT
-
-mkdir -p "$TRACE_DIR"
-
-# Run simulation function (can run in background)
-run_sim() {{
-    local idx=$1
-    local sim_type=$2
-    
-    local sim_bin="$VANILLA_SIM"
-    local trace_ext="vcd"
-    
-    if [ "$sim_type" = "cellift" ]; then
-        sim_bin="$CELLIFT_SIM"
-        trace_ext="vcd"
-    fi
-    
-    local elf_file="$BUILD_DIR/matmul_${{idx}}.elf"
-    local trace_file="$TRACE_DIR/${{sim_type}}_matmul_${{idx}}.vcd"
-    local status_file="$STATUS_DIR/status_${{idx}}"
-    
-    if [ ! -f "$elf_file" ]; then
-        echo "FAIL:$elf_file not found" > "$status_file"
-        return 1
-    fi
-    
-    if [ ! -f "$sim_bin" ]; then
-        echo "FAIL:Simulator not found at $sim_bin" > "$status_file"
-        return 1
-    fi
-    
-    # Run simulation
-    SIMSRAMELF="$elf_file" \\
-    TRACEFILE="$trace_file" \\
-    SIMLEN="$SIMLEN" \\
-    SIMSRAMTAINT="$SIMSRAMTAINT" \\
-    "$sim_bin" > /dev/null 2>&1
-    
-    if [ -f "$trace_file" ]; then
-        local size=$(du -h "$trace_file" | cut -f1)
-        echo "OK:$size" > "$status_file"
-        return 0
-    else
-        echo "FAIL:No trace" > "$status_file"
-        return 1
-    fi
-}}
-
-# Export function and variables for subshells
-export -f run_sim
-export VANILLA_SIM CELLIFT_SIM BUILD_DIR TRACE_DIR SIMLEN STATUS_DIR SIMSRAMTAINT
-
-# Parse arguments
-SIM_TYPE="vanilla"
-START_IDX=0
-END_IDX=$((NUM_TESTS - 1))
-
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        --cellift) SIM_TYPE="cellift"; shift ;;
-        --vanilla) SIM_TYPE="vanilla"; shift ;;
-        --range) START_IDX=$2; END_IDX=$3; shift 3 ;;
-        --single) START_IDX=$2; END_IDX=$2; shift 2 ;;
-        --simlen) SIMLEN=$2; export SIMLEN; shift 2 ;;
-        --jobs|-j) MAX_JOBS=$2; shift 2 ;;
-        -h|--help)
-            echo "Usage: $0 [OPTIONS]"
-            echo ""
-            echo "Options:"
-            echo "  --vanilla       Run vanilla simulations (default)"
-            echo "  --cellift       Run CellIFT simulations"
-            echo "  --single N      Run only test N"
-            echo "  --range A B     Run tests A through B"
-            echo "  --simlen N      Simulation cycles (default: 200000)"
-            echo "  --jobs N, -j N  Parallel jobs (default: $MAX_JOBS)"
-            exit 0 ;;
-        *) echo "Unknown: $1"; exit 1 ;;
-    esac
-done
-
-echo "=========================================="
-echo "Gemmini MatMul Multi-Simulation Runner"
-echo "=========================================="
-echo "Build dir: $BUILD_DIR"
-echo "Trace dir: $TRACE_DIR"
-echo "DIM: $DIM"
-echo "Parallel jobs: $MAX_JOBS"
-echo ""
-
-# Check executables
-if [ ! -f "$BUILD_DIR/matmul_0.elf" ]; then
-    echo -e "${{YELLOW}}Building executables...{{NC}}"
-    cd "$SCRIPT_DIR" && make NUM_TESTS=$NUM_TESTS
-fi
-
-TOTAL=$((END_IDX - START_IDX + 1))
-echo "Simulation: $SIM_TYPE, Cycles: $SIMLEN, Tests: $START_IDX-$END_IDX ($TOTAL total)"
-echo ""
-
-# Run simulations in parallel using job control
-RUNNING=0
-PIDS=()
-INDICES=()
-
-for i in $(seq $START_IDX $END_IDX); do
-    # Start simulation in background
-    run_sim $i $SIM_TYPE &
-    PIDS+=($!)
-    INDICES+=($i)
-    RUNNING=$((RUNNING + 1))
-    
-    # Wait if we've hit max jobs
-    if [ $RUNNING -ge $MAX_JOBS ]; then
-        # Wait for any job to finish
-        wait -n 2>/dev/null || wait ${{PIDS[0]}}
-        RUNNING=$((RUNNING - 1))
-    fi
-done
-
-# Wait for all remaining jobs
-wait
-
-# Collect results
-SUCCESS=0
-FAILED=0
-
-echo "Results:"
-for i in $(seq $START_IDX $END_IDX); do
-    status_file="$STATUS_DIR/status_${{i}}"
-    if [ -f "$status_file" ]; then
-        status=$(cat "$status_file")
-        if [[ "$status" == OK:* ]]; then
-            size="${{status#OK:}}"
-            echo -e "  Test $i: ${{GREEN}}OK{{NC}} ($size)"
-            SUCCESS=$((SUCCESS + 1))
-        else
-            msg="${{status#FAIL:}}"
-            echo -e "  Test $i: ${{RED}}FAIL{{NC}} ($msg)"
-            FAILED=$((FAILED + 1))
-        fi
-    else
-        echo -e "  Test $i: ${{YELLOW}}UNKNOWN{{NC}}"
-        FAILED=$((FAILED + 1))
-    fi
-done
-
-echo ""
-echo "=========================================="
-echo "Summary: $SUCCESS successful, $FAILED failed"
-echo "=========================================="
-
-# Show trace files (limit to 20)
-ls -lh "$TRACE_DIR"/{{vanilla,cellift}}_matmul_*.vcd 2>/dev/null | head -20
-'''
-    
-    with open("run_all_simulations.sh", 'w') as f:
-        f.write(script)
-    os.chmod("run_all_simulations.sh", 0o755)
-    print("Generated run_all_simulations.sh")
+        print(f"Generated {output_path}")
 
 
 def main():
@@ -343,23 +175,34 @@ def main():
         help="Dimension of square matrices (default: 4)"
     )
     parser.add_argument(
-        "--min-val", type=int, default=1,
-        help="Minimum matrix value (default: 1)"
+        "--min-val", type=int, default=-32,
+        help="Minimum matrix value (default: -32, signed int8)"
     )
     parser.add_argument(
-        "--max-val", type=int, default=255,
-        help="Maximum matrix value (default: 255)"
+        "--max-val", type=int, default=31,
+        help="Maximum matrix value (default: 31, signed int8)"
+    )
+    parser.add_argument(
+        "--fixed-b", action="store_true",
+        help="Use the same B matrix for all test patterns (useful for CPA attacks)"
+    )
+    parser.add_argument(
+        "--random-b", action="store_true", default=True,
+        help="Use random B matrix for each test pattern (default)"
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default="test_patterns",
+        help="Output directory for header files (default: test_patterns)"
     )
     parser.add_argument(
         "--build", action="store_true",
         help="Build executables after generation"
     )
-    parser.add_argument(
-        "--run", action="store_true",
-        help="Run simulations after building (implies --build)"
-    )
     
     args = parser.parse_args()
+    
+    # Determine if B should be fixed
+    fixed_b = args.fixed_b
     
     print(f"========================================")
     print(f"Gemmini MatMul Scenario Generator")
@@ -367,27 +210,18 @@ def main():
     print(f"Generating {args.num} matrix pairs...")
     print(f"Matrix dimension: {args.dim}x{args.dim}")
     print(f"Value range: [{args.min_val}, {args.max_val}]")
+    print(f"B matrix: {'fixed (same for all tests)' if fixed_b else 'random (different per test)'}")
+    print(f"Output directory: {args.output_dir}")
     print()
     
-    # Get cellift-gemmini directory (parent of sw/)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    cellift_gemmini_dir = os.path.dirname(os.path.dirname(script_dir))  # Go from scenario_matmul_multi -> sw -> cellift-gemmini
-    
     # Generate matrix pairs and headers
-    pairs = generate_matrix_pairs(args.num, args.dim, args.min_val, args.max_val)
-    generate_matrix_headers(pairs, args.dim, args.min_val, args.max_val)
-    
-    # Generate simulation script
-    generate_run_script(args.num, args.dim, cellift_gemmini_dir)
+    pairs = generate_matrix_pairs(args.num, args.dim, args.min_val, args.max_val, fixed_b=fixed_b)
+    generate_matrix_headers(pairs, args.dim, args.min_val, args.max_val, output_dir=args.output_dir)
     
     print(f"\nGenerated:")
-    print(f"  - {args.num} matrix_N.h header files")
-    print(f"  - run_all_simulations.sh (executable)")
+    print(f"  - {args.num} matrix_N.h header files in {args.output_dir}/")
     
     # Build if requested
-    if args.run:
-        args.build = True
-    
     if args.build:
         print(f"\nBuilding {args.num} executables...")
         ret = subprocess.call([
@@ -398,16 +232,8 @@ def main():
             sys.exit(1)
         
         print(f"Successfully built {args.num} executables in build/")
-        
-        if args.run:
-            print(f"\nRunning all simulations...")
-            ret = subprocess.call(["./run_all_simulations.sh"])
-            if ret != 0:
-                print("Some simulations failed")
-                sys.exit(1)
     else:
         print(f"\nTo build executables, run: make NUM_TESTS={args.num}")
-        print(f"To run simulations, run: ./run_all_simulations.sh")
     
     print(f"\nDone!")
 

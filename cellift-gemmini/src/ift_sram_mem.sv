@@ -133,8 +133,9 @@ module ift_sram_mem #(
             for (int j = 0; j < WidthBytes; j++) begin
               word[j] = buffer[i*WidthBytes+j];
             end
-            mem_taints[section_addr/WidthBytes+i] |= word;
-            $display("Adding taint word SRAM addr %x: %x result: %x", section_addr/WidthBytes+i, word, mem_taints[section_addr/WidthBytes+i]);
+            // Apply RelocateRequestUp to match runtime access pattern
+            mem_taints[RelocateRequestUp | (section_addr/WidthBytes+i)] |= word;
+            $display("Adding taint word SRAM addr %x (relocated: %x): %x result: %x", section_addr/WidthBytes+i, RelocateRequestUp | (section_addr/WidthBytes+i), word, mem_taints[RelocateRequestUp | (section_addr/WidthBytes+i)]);
           end
         end
       end

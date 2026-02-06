@@ -27,7 +27,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WALPP_BIN="/home/andrija/projects/walpp/build/wal"
 
 # Plot script location (default: plot_trace.py in same directory as this script)
-PLOT_SCRIPT="$SCRIPT_DIR/plot_trace.py"
+PLOT_SCRIPT="/mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-rocket/sw/scenario_aes128_multi/plot_trace.py"
 
 # Default input directory (VCD files) - can use local traces or rackstation
 INPUT_DIR="$SCRIPT_DIR/traces"
@@ -292,6 +292,39 @@ export -f process_vcd
 export WALPP_BIN OUTPUT_DIR STATUS_DIR COMPUTE_HD COMPUTE_HW
 
 # =============================================================================
+# Progress bar function
+# =============================================================================
+show_progress() {
+    local completed=$1
+    local total=$2
+    local start_time=$3
+    local label=${4:-"Progress"}
+    local width=50
+    local percent=$((completed * 100 / total))
+    local filled=$((completed * width / total))
+    local empty=$((width - filled))
+    
+    # Calculate ETA
+    local elapsed=$(($(date +%s) - start_time))
+    local eta="--:--"
+    if [ $completed -gt 0 ]; then
+        local remaining=$(( (elapsed * total / completed) - elapsed ))
+        local eta_min=$((remaining / 60))
+        local eta_sec=$((remaining % 60))
+        eta=$(printf "%02d:%02d" $eta_min $eta_sec)
+    fi
+    
+    # Build progress bar
+    local bar=""
+    for ((j=0; j<filled; j++)); do bar+="█"; done
+    for ((j=0; j<empty; j++)); do bar+="░"; done
+    
+    # Print progress (carriage return to overwrite)
+    printf "\r%s: [%s] %d/%d (%d%%) ETA: %s  " "$label" "$bar" "$completed" "$total" "$percent" "$eta"
+}
+export -f show_progress
+
+# =============================================================================
 # Main processing loop with parallelization (skip if --plot-only)
 # =============================================================================
 if [ "$PLOT_ONLY" = false ]; then
@@ -300,11 +333,14 @@ echo "Processing $VCD_COUNT VCD files with $MAX_JOBS parallel jobs..."
 echo ""
 
 START_TIME=$(date +%s)
+COMPLETED=0
 
 # Launch jobs
 RUNNING=0
 declare -a PIDS
 declare -a BASENAMES
+
+show_progress 0 $VCD_COUNT $START_TIME "WAL++ Analysis"
 
 for vcd_file in "${VCD_FILES[@]}"; do
     basename=$(basename "$vcd_file" .vcd)
@@ -320,11 +356,21 @@ for vcd_file in "${VCD_FILES[@]}"; do
         # Wait for any job to finish
         wait -n 2>/dev/null || wait ${PIDS[0]}
         RUNNING=$((RUNNING - 1))
+        COMPLETED=$((COMPLETED + 1))
+        show_progress $COMPLETED $VCD_COUNT $START_TIME "WAL++ Analysis"
     fi
 done
 
-# Wait for all remaining jobs
-wait
+# Wait for all remaining jobs and update progress
+while [ $COMPLETED -lt $VCD_COUNT ]; do
+    wait -n 2>/dev/null || wait
+    COMPLETED=$((COMPLETED + 1))
+    show_progress $COMPLETED $VCD_COUNT $START_TIME "WAL++ Analysis"
+done
+
+# Final newline after progress bar
+echo ""
+echo ""
 
 END_TIME=$(date +%s)
 ELAPSED=$((END_TIME - START_TIME))
@@ -455,8 +501,10 @@ if [ "$GENERATE_PLOTS" = true ]; then
         PLOT_START=$(date +%s)
         PLOT_SUCCESS=0
         PLOT_FAILED=0
+        PLOT_COMPLETED=0
         
         echo "Plotting with $MAX_JOBS parallel jobs..."
+        echo ""
         
         # Process all CSV files
         ALL_CSVS=("${HD_CSVS[@]}" "${HW_CSVS[@]}")
@@ -464,6 +512,8 @@ if [ "$GENERATE_PLOTS" = true ]; then
         declare -a PLOT_PIDS
         declare -a PLOT_FILES
         declare -a PLOT_RESULTS
+        
+        show_progress 0 $TOTAL_PLOTS $PLOT_START "Plotting"
         
         for csv_file in "${ALL_CSVS[@]}"; do
             basename=$(basename "$csv_file" .csv)
@@ -482,11 +532,21 @@ if [ "$GENERATE_PLOTS" = true ]; then
             if [ $RUNNING -ge $MAX_JOBS ]; then
                 wait -n 2>/dev/null || wait ${PLOT_PIDS[0]}
                 RUNNING=$((RUNNING - 1))
+                PLOT_COMPLETED=$((PLOT_COMPLETED + 1))
+                show_progress $PLOT_COMPLETED $TOTAL_PLOTS $PLOT_START "Plotting"
             fi
         done
         
-        # Wait for all remaining jobs
-        wait
+        # Wait for all remaining jobs and update progress
+        while [ $PLOT_COMPLETED -lt $TOTAL_PLOTS ]; do
+            wait -n 2>/dev/null || wait
+            PLOT_COMPLETED=$((PLOT_COMPLETED + 1))
+            show_progress $PLOT_COMPLETED $TOTAL_PLOTS $PLOT_START "Plotting"
+        done
+        
+        # Final newline after progress bar
+        echo ""
+        echo ""
         
         PLOT_END=$(date +%s)
         PLOT_ELAPSED=$((PLOT_END - PLOT_START))

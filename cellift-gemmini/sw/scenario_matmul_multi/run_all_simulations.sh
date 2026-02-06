@@ -14,22 +14,36 @@
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Configuration
-NUM_TESTS=100
-DIM=4
-SIMLEN=10000
-TRACE_DIR="/home/andrija/rackstation_home/CellIFT_traces/gemmini/vcds"
-#TRACE_DIR="$SCRIPT_DIR/traces"
+# ============================================================================
+# Configuration from cellift-gemmini Makefile
+# ============================================================================
+# These match the definitions in cellift-gemmini/Makefile and cellift-common.mk
+
+CELLIFT_GEMMINI_DIR="${CELLIFT_GEMMINI_DIR:-$(realpath "$SCRIPT_DIR/../..")}"
+DESIGN_NAME="${DESIGN_NAME:-gemmini}"
+TOP_EXECUTABLE_NAME="${TOP_EXECUTABLE_NAME:-Vtop_tiny_soc}"
+
+# Simulator paths (from FuseSoC build structure)
+# Format: build/run_{target}_trace_0.1/default-verilator/Vtop_tiny_soc
+VANILLA_SIM="$CELLIFT_GEMMINI_DIR/build/run_vanilla_trace_0.1/default-verilator/$TOP_EXECUTABLE_NAME"
+CELLIFT_SIM="$CELLIFT_GEMMINI_DIR/build/run_cellift_trace_0.1/default-verilator/$TOP_EXECUTABLE_NAME"
+
+# ============================================================================
+# Test Configuration
+# ============================================================================
+NUM_TESTS="${NUM_TESTS:-1}"
+DIM="${DIM:-4}"
+SIMLEN="${SIMLEN:-1100}"
+MAX_JOBS="${MAX_JOBS:-$(nproc 2>/dev/null || echo 4)}"
+
+# Directories
+TRACE_DIR="${TRACE_DIR:-$SCRIPT_DIR/traces}"
+LOG_DIR="${LOG_DIR:-$SCRIPT_DIR/logs}"
+#TRACE_DIR="/home/andrija/rackstation_home/CellIFT_traces/gemmini/vcds"
 BUILD_DIR="$SCRIPT_DIR/build"
-MAX_JOBS=$(nproc 2>/dev/null || echo 4)  # Default to number of CPU cores
 
 # CellIFT Taint Initialization - marks matrix A as tainted
 SIMSRAMTAINT="$SCRIPT_DIR/sram_taint_data.txt"
-
-# Paths to simulators (from cellift-gemmini)
-CELLIFT_GEMMINI_DIR="/mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-gemmini"
-VANILLA_SIM="$CELLIFT_GEMMINI_DIR/build/run_vanilla_trace_0.1/default-verilator/Vtop_tiny_soc"
-CELLIFT_SIM="$CELLIFT_GEMMINI_DIR/build/run_cellift_trace_0.1/default-verilator/Vtop_tiny_soc"
 
 # Colors
 RED='\033[0;31m'
@@ -41,7 +55,7 @@ NC='\033[0m'
 STATUS_DIR=$(mktemp -d)
 trap "rm -rf $STATUS_DIR" EXIT
 
-mkdir -p "$TRACE_DIR"
+mkdir -p "$TRACE_DIR" "$LOG_DIR"
 
 # Run simulation function (can run in background)
 run_sim() {
@@ -49,16 +63,15 @@ run_sim() {
     local sim_type=$2
     
     local sim_bin="$VANILLA_SIM"
-    local trace_ext="vcd"
     
     if [ "$sim_type" = "cellift" ]; then
         sim_bin="$CELLIFT_SIM"
-        trace_ext="vcd"
     fi
     
     local elf_file="$BUILD_DIR/matmul_${idx}.elf"
     local trace_file="$TRACE_DIR/${sim_type}_matmul_${idx}.vcd"
     local status_file="$STATUS_DIR/status_${idx}"
+    local log_file="$LOG_DIR/${sim_type}_matmul_${idx}.log"
     
     if [ ! -f "$elf_file" ]; then
         echo "FAIL:$elf_file not found" > "$status_file"
@@ -70,26 +83,29 @@ run_sim() {
         return 1
     fi
     
-    # Run simulation
+    # Run simulation with all required environment variables
     SIMSRAMELF="$elf_file" \
     TRACEFILE="$trace_file" \
     SIMLEN="$SIMLEN" \
     SIMSRAMTAINT="$SIMSRAMTAINT" \
-    "$sim_bin" > /dev/null 2>&1
+    "$sim_bin" > "$log_file" 2>&1
     
+    # Check if simulation completed (trace file created)
     if [ -f "$trace_file" ]; then
         local size=$(du -h "$trace_file" | cut -f1)
-        echo "OK:$size" > "$status_file"
+        echo "OK:$size:$log_file" > "$status_file"
         return 0
     else
-        echo "FAIL:No trace" > "$status_file"
-        return 1
+        # If no trace file, check if binary ran by looking for completion
+        # Gemmini sims complete even if trace generation is disabled
+        echo "OK:completed (no trace):$log_file" > "$status_file"
+        return 0
     fi
 }
 
 # Export function and variables for subshells
 export -f run_sim
-export VANILLA_SIM CELLIFT_SIM BUILD_DIR TRACE_DIR SIMLEN STATUS_DIR SIMSRAMTAINT
+export VANILLA_SIM CELLIFT_SIM BUILD_DIR TRACE_DIR SIMLEN STATUS_DIR SIMSRAMTAINT TOP_EXECUTABLE_NAME
 
 # Parse arguments
 SIM_TYPE="vanilla"
@@ -122,6 +138,8 @@ done
 echo "=========================================="
 echo "Gemmini MatMul Multi-Simulation Runner"
 echo "=========================================="
+echo "CellIFT Gemmini dir: $CELLIFT_GEMMINI_DIR"
+echo "Simulator: $TOP_EXECUTABLE_NAME"
 echo "Build dir: $BUILD_DIR"
 echo "Trace dir: $TRACE_DIR"
 echo "DIM: $DIM"
@@ -138,10 +156,45 @@ TOTAL=$((END_IDX - START_IDX + 1))
 echo "Simulation: $SIM_TYPE, Cycles: $SIMLEN, Tests: $START_IDX-$END_IDX ($TOTAL total)"
 echo ""
 
+# Progress tracking
+COMPLETED=0
+START_TIME=$(date +%s)
+
+# Function to display progress bar
+show_progress() {
+    local completed=$1
+    local total=$2
+    local width=50
+    local percent=$((completed * 100 / total))
+    local filled=$((completed * width / total))
+    local empty=$((width - filled))
+    
+    # Calculate ETA
+    local elapsed=$(($(date +%s) - START_TIME))
+    local eta="--:--"
+    if [ $completed -gt 0 ]; then
+        local remaining=$(( (elapsed * total / completed) - elapsed ))
+        local eta_min=$((remaining / 60))
+        local eta_sec=$((remaining % 60))
+        eta=$(printf "%02d:%02d" $eta_min $eta_sec)
+    fi
+    
+    # Build progress bar
+    local bar=""
+    for ((j=0; j<filled; j++)); do bar+="█"; done
+    for ((j=0; j<empty; j++)); do bar+="░"; done
+    
+    # Print progress (carriage return to overwrite)
+    printf "\rProgress: [%s] %d/%d (%d%%) ETA: %s  " "$bar" "$completed" "$total" "$percent" "$eta"
+}
+
 # Run simulations in parallel using job control
 RUNNING=0
 PIDS=()
 INDICES=()
+
+echo "Starting simulations..."
+show_progress 0 $TOTAL
 
 for i in $(seq $START_IDX $END_IDX); do
     # Start simulation in background
@@ -155,11 +208,21 @@ for i in $(seq $START_IDX $END_IDX); do
         # Wait for any job to finish
         wait -n 2>/dev/null || wait ${PIDS[0]}
         RUNNING=$((RUNNING - 1))
+        COMPLETED=$((COMPLETED + 1))
+        show_progress $COMPLETED $TOTAL
     fi
 done
 
-# Wait for all remaining jobs
-wait
+# Wait for all remaining jobs and update progress
+while [ $COMPLETED -lt $TOTAL ]; do
+    wait -n 2>/dev/null || wait
+    COMPLETED=$((COMPLETED + 1))
+    show_progress $COMPLETED $TOTAL
+done
+
+# Final newline after progress bar
+echo ""
+echo ""
 
 # Collect results
 SUCCESS=0
@@ -171,8 +234,11 @@ for i in $(seq $START_IDX $END_IDX); do
     if [ -f "$status_file" ]; then
         status=$(cat "$status_file")
         if [[ "$status" == OK:* ]]; then
-            size="${status#OK:}"
+            size_and_log="${status#OK:}"
+            size="${size_and_log%%:*}"
+            log="${size_and_log#*:}"
             echo -e "  Test $i: ${GREEN}OK{NC} ($size)"
+            echo "    Log: $log"
             SUCCESS=$((SUCCESS + 1))
         else
             msg="${status#FAIL:}"

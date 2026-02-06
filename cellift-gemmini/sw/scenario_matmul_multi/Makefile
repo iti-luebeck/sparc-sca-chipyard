@@ -10,8 +10,8 @@
 #   make single TEST_INDEX=5  # Build single executable for test 5
 #   make clean                # Remove all build artifacts
 
-# Toolchain from chipyard
-TOOLCHAIN_PREFIX ?= /mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/bin/riscv64-unknown-elf-
+# Toolchain from esp-tools (matches working Gemmini headers)
+TOOLCHAIN_PREFIX ?= /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/esp-tools-install/bin/riscv64-unknown-elf-
 
 CC = $(TOOLCHAIN_PREFIX)gcc
 AS = $(TOOLCHAIN_PREFIX)gcc
@@ -23,8 +23,11 @@ OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 ARCH = rv64g
 ABI = lp64
 
+# Directory containing generated matrix header files
+TEST_PATTERNS_DIR ?= test_patterns
+
 # Number of executables to build (auto-detect from matrix headers or override)
-NUM_TESTS ?= $(shell ls -1 matrix_*.h 2>/dev/null | wc -l)
+NUM_TESTS ?= $(shell ls -1 $(TEST_PATTERNS_DIR)/matrix_*.h 2>/dev/null | wc -l)
 ifeq ($(NUM_TESTS),0)
 NUM_TESTS := 10
 endif
@@ -37,7 +40,7 @@ CFLAGS = -march=$(ARCH) -mabi=$(ABI) -O2 -g
 CFLAGS += -fno-builtin -nostdlib -nostartfiles
 CFLAGS += -mcmodel=medany -fno-pic
 CFLAGS += -Wall -Wextra -Wno-main -Wno-unused-function
-CFLAGS += -I.
+CFLAGS += -I. -I$(TEST_PATTERNS_DIR)
 
 # Assembler flags
 ASFLAGS = -march=$(ARCH) -mabi=$(ABI) -g
@@ -72,9 +75,9 @@ $(BUILD_DIR):
 
 # Pattern rule for building each executable
 # matmul_N.elf is built with -include matrix_N.h (contains only that matrix pair)
-$(BUILD_DIR)/matmul_%.elf: $(ASM_SRCS) $(C_SRCS) matrix_%.h | $(BUILD_DIR)
+$(BUILD_DIR)/matmul_%.elf: $(ASM_SRCS) $(C_SRCS) $(TEST_PATTERNS_DIR)/matrix_%.h | $(BUILD_DIR)
 	@echo "Building $@ (matrix pair $*)"
-	@$(CC) $(CFLAGS) -include matrix_$*.h -c -o $(BUILD_DIR)/main_$*.o main.c
+	@$(CC) $(CFLAGS) -include $(TEST_PATTERNS_DIR)/matrix_$*.h -c -o $(BUILD_DIR)/main_$*.o main.c
 	@$(AS) $(ASFLAGS) -c -o $(BUILD_DIR)/startup_$*.o startup.S
 	@$(LD) $(LDFLAGS) -o $@ $(BUILD_DIR)/startup_$*.o $(BUILD_DIR)/main_$*.o
 	@$(OBJDUMP) -d -S $@ > $@.dump
@@ -85,7 +88,7 @@ ifndef TEST_INDEX
 	$(error TEST_INDEX is not set. Usage: make single TEST_INDEX=N)
 endif
 	@echo "Building single executable for matrix pair $(TEST_INDEX)"
-	$(CC) $(CFLAGS) -include matrix_$(TEST_INDEX).h -c -o $(BUILD_DIR)/main.o main.c
+	$(CC) $(CFLAGS) -include $(TEST_PATTERNS_DIR)/matrix_$(TEST_INDEX).h -c -o $(BUILD_DIR)/main.o main.c
 	$(AS) $(ASFLAGS) -c -o $(BUILD_DIR)/startup.o startup.S
 	$(LD) $(LDFLAGS) -o $(BUILD_DIR)/matmul_$(TEST_INDEX).elf $(BUILD_DIR)/startup.o $(BUILD_DIR)/main.o
 	$(OBJDUMP) -d -S $(BUILD_DIR)/matmul_$(TEST_INDEX).elf > $(BUILD_DIR)/matmul_$(TEST_INDEX).elf.dump
@@ -95,7 +98,7 @@ clean:
 
 # Clean everything including generated matrix headers
 distclean: clean
-	rm -f matrix_*.h run_all_simulations.sh
+	rm -rf $(TEST_PATTERNS_DIR)
 
 # Show configuration
 info:

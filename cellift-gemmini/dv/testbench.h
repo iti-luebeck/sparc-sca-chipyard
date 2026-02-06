@@ -21,8 +21,8 @@
 
 const int kResetLength = 5;
 #if VM_TRACE
-// Depth of the trace.
-const int kTraceLevel = 6;
+// Depth of the trace. Increased to 10 to capture Gemmini internal signals (mesh, scratchpad, accumulator).
+const int kTraceLevel = 10;
 #endif // VM_TRACE
 
 typedef Vtop_tiny_soc Module;

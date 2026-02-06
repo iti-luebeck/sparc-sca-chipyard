@@ -28,6 +28,41 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 import warnings
 warnings.filterwarnings('ignore')
 
+# Try to import tqdm for progress bars
+try:
+    from tqdm import tqdm
+    HAS_TQDM = True
+except ImportError:
+    HAS_TQDM = False
+    class tqdm:
+        def __init__(self, iterable=None, total=None, desc=None, unit=None, ncols=None, leave=True):
+            self.iterable = iterable
+            self.total = total if total else (len(iterable) if iterable else 0)
+            self.desc = desc or ''
+            self.n = 0
+        def __iter__(self):
+            for item in self.iterable:
+                yield item
+                self.n += 1
+                self._print_progress()
+        def _print_progress(self):
+            pct = 100 * self.n / self.total if self.total > 0 else 0
+            bar_len = 30
+            filled = int(bar_len * self.n / self.total) if self.total > 0 else 0
+            bar = '█' * filled + '░' * (bar_len - filled)
+            print(f'\r  {self.desc}: |{bar}| {self.n}/{self.total} ({pct:.0f}%)', end='', flush=True)
+            if self.n >= self.total:
+                print()
+        def update(self, n=1):
+            self.n += n
+            self._print_progress()
+        def close(self):
+            pass
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+
 # AES S-box lookup table
 SBOX = np.array([
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -112,8 +147,12 @@ def load_trace(csv_path: str) -> Optional[np.ndarray]:
         return None
         
     except Exception as e:
-        print(f"Warning: Failed to load {csv_path}: {e}")
         return None
+
+
+def _load_trace_worker(trace_file: str) -> Optional[np.ndarray]:
+    """Worker function for parallel trace loading."""
+    return load_trace(trace_file)
 
 
 def align_traces_xcorr(traces: np.ndarray, reference_idx: int = 0, 
@@ -228,13 +267,15 @@ def align_traces_peak(traces: np.ndarray, window_start: int = 0,
     return aligned
 
 
-def compute_correlation(traces: np.ndarray, hypotheses: np.ndarray) -> np.ndarray:
+def compute_correlation(traces: np.ndarray, hypotheses: np.ndarray, 
+                        traces_norm: Optional[np.ndarray] = None) -> np.ndarray:
     """
     Compute Pearson correlation between traces and hypothetical power values.
     
     Args:
         traces: 2D array (num_traces, trace_length)
         hypotheses: 1D array (num_traces,) of hypothetical power values
+        traces_norm: Optional precomputed normalized traces (num_traces, trace_length)
     
     Returns:
         1D array of correlation coefficients for each time point
@@ -248,33 +289,31 @@ def compute_correlation(traces: np.ndarray, hypotheses: np.ndarray) -> np.ndarra
         return np.zeros(trace_len)
     h_norm = (hypotheses - h_mean) / h_std
     
-    # Compute correlation for each time point
-    correlations = np.zeros(trace_len)
+    # Use precomputed normalized traces if available, otherwise compute
+    if traces_norm is None:
+        traces_mean = np.mean(traces, axis=0)
+        traces_std = np.std(traces, axis=0)
+        traces_std[traces_std == 0] = 1
+        traces_norm = (traces - traces_mean) / traces_std
     
-    # Vectorized computation
-    traces_mean = np.mean(traces, axis=0)
-    traces_std = np.std(traces, axis=0)
-    
-    # Avoid division by zero
-    traces_std[traces_std == 0] = 1
-    
-    for t in range(trace_len):
-        t_norm = (traces[:, t] - traces_mean[t]) / traces_std[t]
-        correlations[t] = np.dot(h_norm, t_norm) / num_traces
+    # Fully vectorized correlation computation (no loop!)
+    correlations = np.dot(h_norm, traces_norm) / num_traces
     
     return correlations
 
 
 def attack_single_byte(byte_idx: int, plaintexts: np.ndarray, traces: np.ndarray,
-                       power_model: str = 'hw') -> Tuple[int, np.ndarray, np.ndarray]:
+                       power_model: str = 'hw',
+                       traces_norm: Optional[np.ndarray] = None) -> Tuple[int, np.ndarray, np.ndarray]:
     """
-    Perform CPA attack on a single key byte.
+    Perform CPA attack on a single key byte using fully vectorized computation.
     
     Args:
         byte_idx: Index of the key byte to attack (0-15)
         plaintexts: Array of plaintexts (num_traces, 16)
         traces: Array of power traces (num_traces, trace_length)
         power_model: 'hw' for Hamming Weight, 'hd' for Hamming Distance
+        traces_norm: Optional precomputed normalized traces (num_traces, trace_length)
     
     Returns:
         (best_key_byte, all_correlations, max_correlations)
@@ -285,31 +324,60 @@ def attack_single_byte(byte_idx: int, plaintexts: np.ndarray, traces: np.ndarray
     num_traces = len(plaintexts)
     trace_len = traces.shape[1]
     
-    all_correlations = np.zeros((256, trace_len))
-    max_correlations = np.zeros(256)
-    
     pt_byte = plaintexts[:, byte_idx]
     
-    for key_guess in range(256):
-        # Compute intermediate value: S-box output
-        sbox_out = SBOX[pt_byte ^ key_guess]
-        
-        # Compute hypothetical power consumption
-        if power_model == 'hw':
-            # Hamming Weight model
-            hypotheses = hamming_weight(sbox_out).astype(np.float64)
-        else:
-            # Hamming Distance model: HD between plaintext byte and S-box output
-            hypotheses = hamming_distance(pt_byte, sbox_out).astype(np.float64)
-        
-        # Compute correlation
-        corr = compute_correlation(traces, hypotheses)
-        all_correlations[key_guess] = corr
-        max_correlations[key_guess] = np.max(np.abs(corr))
+    # Build hypothesis matrix for all 256 key guesses at once: (256, num_traces)
+    key_guesses = np.arange(256, dtype=np.uint8)
+    # For each key guess k, compute S-box[plaintext XOR k]
+    # Shape: (256, num_traces)
+    sbox_out_matrix = SBOX[pt_byte[np.newaxis, :] ^ key_guesses[:, np.newaxis]]
+    
+    if power_model == 'hw':
+        # Hamming Weight model - shape: (256, num_traces)
+        hypotheses_matrix = HW_TABLE[sbox_out_matrix].astype(np.float64)
+    else:
+        # Hamming Distance model: HD between plaintext byte and S-box output
+        hypotheses_matrix = HW_TABLE[pt_byte[np.newaxis, :] ^ sbox_out_matrix].astype(np.float64)
+    
+    # Normalize hypotheses for each key guess (along axis=1, i.e., across traces)
+    h_mean = np.mean(hypotheses_matrix, axis=1, keepdims=True)  # (256, 1)
+    h_std = np.std(hypotheses_matrix, axis=1, keepdims=True)    # (256, 1)
+    h_std[h_std == 0] = 1
+    h_norm = (hypotheses_matrix - h_mean) / h_std  # (256, num_traces)
+    
+    # Compute normalized traces if not provided
+    if traces_norm is None:
+        traces_mean = np.mean(traces, axis=0)
+        traces_std = np.std(traces, axis=0)
+        traces_std[traces_std == 0] = 1
+        traces_norm = (traces - traces_mean) / traces_std  # (num_traces, trace_len)
+    
+    # Compute all correlations at once using matrix multiplication
+    # h_norm: (256, num_traces), traces_norm: (num_traces, trace_len)
+    # Result: (256, trace_len)
+    all_correlations = np.dot(h_norm, traces_norm) / num_traces
+    
+    # Find maximum absolute correlation for each key guess
+    max_correlations = np.max(np.abs(all_correlations), axis=1)
     
     best_key = np.argmax(max_correlations)
     
     return best_key, all_correlations, max_correlations
+
+
+# Global variables for multiprocessing workers
+_attack_plaintexts = None
+_attack_traces = None
+_attack_traces_norm = None
+_attack_power_model = None
+
+def _attack_byte_worker(byte_idx: int) -> Tuple[int, int, np.ndarray, np.ndarray]:
+    """Worker function for parallel byte attack."""
+    best_key, all_corr, max_corr = attack_single_byte(
+        byte_idx, _attack_plaintexts, _attack_traces, 
+        _attack_power_model, _attack_traces_norm
+    )
+    return byte_idx, best_key, all_corr, max_corr
 
 
 def cpa_attack(plaintexts: np.ndarray, traces: np.ndarray, 
@@ -328,6 +396,8 @@ def cpa_attack(plaintexts: np.ndarray, traces: np.ndarray,
     Returns:
         Dictionary with attack results
     """
+    global _attack_plaintexts, _attack_traces, _attack_traces_norm, _attack_power_model
+    
     results = {
         'recovered_key': np.zeros(16, dtype=np.uint8),
         'correlations': {},
@@ -341,12 +411,39 @@ def cpa_attack(plaintexts: np.ndarray, traces: np.ndarray,
     print(f"Trace length: {traces.shape[1]} samples")
     print()
     
-    # Attack each byte (can be parallelized)
-    for byte_idx in range(16):
-        best_key, all_corr, max_corr = attack_single_byte(
-            byte_idx, plaintexts, traces, power_model
-        )
-        
+    # Precompute normalized traces once for all byte attacks
+    print("Precomputing normalized traces...")
+    traces_mean = np.mean(traces, axis=0)
+    traces_std = np.std(traces, axis=0)
+    traces_std[traces_std == 0] = 1
+    traces_norm = (traces - traces_mean) / traces_std
+    
+    # Set up global variables for parallel workers
+    _attack_plaintexts = plaintexts
+    _attack_traces = traces
+    _attack_traces_norm = traces_norm
+    _attack_power_model = power_model
+    
+    # Attack all 16 bytes in parallel
+    print("Attacking key bytes...")
+    byte_results = []
+    
+    if num_workers > 1:
+        from multiprocessing import Pool
+        with Pool(min(num_workers, 16)) as pool:
+            for result in tqdm(pool.imap(_attack_byte_worker, range(16)), 
+                             total=16, desc="Attacking bytes"):
+                byte_results.append(result)
+    else:
+        for byte_idx in tqdm(range(16), desc="Attacking bytes"):
+            result = _attack_byte_worker(byte_idx)
+            byte_results.append(result)
+    
+    # Sort results by byte_idx and process
+    byte_results.sort(key=lambda x: x[0])
+    
+    print("\nResults:")
+    for byte_idx, best_key, all_corr, max_corr in byte_results:
         results['recovered_key'][byte_idx] = best_key
         results['correlations'][byte_idx] = all_corr
         results['max_correlations'][byte_idx] = max_corr
@@ -372,7 +469,7 @@ def cpa_attack(plaintexts: np.ndarray, traces: np.ndarray,
 
 def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray] = None,
                  traces: Optional[np.ndarray] = None):
-    """Generate plots for attack results."""
+    """Generate plots for attack results (optimized version)."""
     try:
         import matplotlib
         matplotlib.use('Agg')
@@ -386,29 +483,44 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
     
     recovered_key = results['recovered_key']
     
+    # Downsampling factor for faster plotting
+    trace_len = results['correlations'][0].shape[1]
+    downsample = max(1, trace_len // 2000)  # Target ~2000 points for speed
+    
     # ==========================================================================
     # Plot 1: Correlation traces for each key byte (4x4 grid)
     # ==========================================================================
+    print("  Generating correlation traces plot...")
     fig, axes = plt.subplots(4, 4, figsize=(20, 16))
     fig.suptitle('CPA Correlation Traces for All Key Bytes', fontsize=14)
     
-    for byte_idx in range(16):
+    for byte_idx in tqdm(range(16), desc="  Plotting bytes", leave=False):
         ax = axes[byte_idx // 4, byte_idx % 4]
         all_corr = results['correlations'][byte_idx]
         best_key = recovered_key[byte_idx]
+        max_corr = results['max_correlations'][byte_idx]
         
-        # Plot all hypotheses in light gray
-        for k in range(256):
+        # Downsample for plotting
+        x_points = np.arange(0, trace_len, downsample)
+        
+        # Only plot top 20 hypotheses (excluding best and correct) for speed
+        sorted_keys = np.argsort(max_corr)[::-1]
+        top_keys = sorted_keys[:20]
+        
+        # Plot top hypotheses in light gray (excluding best)
+        for k in top_keys:
             if k != best_key and (known_key is None or k != known_key[byte_idx]):
-                ax.plot(all_corr[k], color='lightgray', alpha=0.3, linewidth=0.3)
+                ax.plot(x_points, all_corr[k, ::downsample], color='lightgray', 
+                        alpha=0.5, linewidth=0.5)
         
         # Plot best hypothesis in red
-        ax.plot(all_corr[best_key], color='red', linewidth=1.0, 
+        ax.plot(x_points, all_corr[best_key, ::downsample], color='red', linewidth=1.0, 
                 label=f'Best: 0x{best_key:02x}')
         
         # Plot correct key in green if known and different from best
         if known_key is not None and known_key[byte_idx] != best_key:
-            ax.plot(all_corr[known_key[byte_idx]], color='green', linewidth=1.0,
+            ax.plot(x_points, all_corr[known_key[byte_idx], ::downsample], 
+                    color='green', linewidth=1.0,
                     label=f'Actual: 0x{known_key[byte_idx]:02x}')
         
         ax.set_title(f'Byte {byte_idx}')
@@ -418,7 +530,7 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
         ax.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, 'correlation_traces.png'), dpi=150)
+    plt.savefig(os.path.join(output_dir, 'correlation_traces.png'), dpi=100)
     plt.close()
     print(f"  Saved: correlation_traces.png")
     
@@ -451,7 +563,7 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
         ax.set_xlim(-1, 256)
     
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, 'key_hypotheses.png'), dpi=150)
+    plt.savefig(os.path.join(output_dir, 'key_hypotheses.png'), dpi=100)
     plt.close()
     print(f"  Saved: key_hypotheses.png")
     
@@ -514,7 +626,7 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
         axes[1, 1].set_title('Success Rate (N/A)')
     
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, 'attack_summary.png'), dpi=150)
+    plt.savefig(os.path.join(output_dir, 'attack_summary.png'), dpi=100)
     plt.close()
     print(f"  Saved: attack_summary.png")
     
@@ -530,18 +642,19 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
     if traces is not None:
         fig, axes = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
         
-        # Average trace
+        # Average trace (downsampled)
         ax = axes[0]
         mean_trace = np.mean(traces, axis=0)
-        ax.plot(mean_trace, color='steelblue', linewidth=0.5)
+        x_points = np.arange(0, len(mean_trace), downsample)
+        ax.plot(x_points, mean_trace[::downsample], color='steelblue', linewidth=0.5)
         ax.set_ylabel('Average Trace Value')
         ax.set_title('Average Power Trace')
         ax.grid(True, alpha=0.3)
         
-        # Correlation for first byte (best hypothesis)
+        # Correlation for first byte (best hypothesis) - downsampled
         ax = axes[1]
         corr = results['correlations'][0][recovered_key[0]]
-        ax.plot(corr, color='red', linewidth=0.5)
+        ax.plot(x_points, corr[::downsample], color='red', linewidth=0.5)
         ax.set_xlabel('Sample')
         ax.set_ylabel('Correlation')
         ax.set_title(f'Correlation Trace for Byte 0 (key=0x{recovered_key[0]:02x})')
@@ -555,7 +668,7 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
                     arrowprops=dict(arrowstyle='->', color='green'))
         
         plt.tight_layout()
-        plt.savefig(os.path.join(output_dir, 'trace_correlation_overlay.png'), dpi=150)
+        plt.savefig(os.path.join(output_dir, 'trace_correlation_overlay.png'), dpi=100)
         plt.close()
         print(f"  Saved: trace_correlation_overlay.png")
     
@@ -571,29 +684,35 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
     max_corr = results['max_correlations'][best_byte_idx]
     best_key = recovered_key[best_byte_idx]
     
-    # Full correlation trace
+    # Get top 20 keys for plotting (to reduce line count)
+    sorted_keys = np.argsort(max_corr)[::-1]
+    top_20_keys = sorted_keys[:20]
+    
+    # Full correlation trace (downsampled, only top 20 + best)
     ax = axes[0, 0]
-    for k in range(256):
-        color = 'red' if k == best_key else 'lightgray'
-        alpha = 1.0 if k == best_key else 0.2
-        lw = 1.5 if k == best_key else 0.3
-        ax.plot(all_corr[k], color=color, alpha=alpha, linewidth=lw)
-    ax.set_title(f'Byte {best_byte_idx}: All 256 Correlation Traces')
+    x_points = np.arange(0, all_corr.shape[1], downsample)
+    for k in top_20_keys:
+        if k != best_key:
+            ax.plot(x_points, all_corr[k, ::downsample], color='lightgray', 
+                    alpha=0.5, linewidth=0.5)
+    ax.plot(x_points, all_corr[best_key, ::downsample], color='red', 
+            alpha=1.0, linewidth=1.5)
+    ax.set_title(f'Byte {best_byte_idx}: Top 20 Correlation Traces')
     ax.set_xlabel('Sample')
     ax.set_ylabel('Correlation')
     
-    # Zoomed around peak
+    # Zoomed around peak (no downsampling needed for small window)
     peak_sample = np.argmax(np.abs(all_corr[best_key]))
     zoom_start = max(0, peak_sample - 500)
     zoom_end = min(all_corr.shape[1], peak_sample + 500)
     
     ax = axes[0, 1]
-    for k in range(256):
-        color = 'red' if k == best_key else 'lightgray'
-        alpha = 1.0 if k == best_key else 0.2
-        lw = 1.5 if k == best_key else 0.3
-        ax.plot(range(zoom_start, zoom_end), all_corr[k, zoom_start:zoom_end],
-                color=color, alpha=alpha, linewidth=lw)
+    for k in top_20_keys:
+        if k != best_key:
+            ax.plot(range(zoom_start, zoom_end), all_corr[k, zoom_start:zoom_end],
+                    color='lightgray', alpha=0.5, linewidth=0.5)
+    ax.plot(range(zoom_start, zoom_end), all_corr[best_key, zoom_start:zoom_end],
+            color='red', alpha=1.0, linewidth=1.5)
     ax.axvline(x=peak_sample, color='green', linestyle='--', alpha=0.7)
     ax.set_title(f'Zoomed Around Peak (sample {peak_sample})')
     ax.set_xlabel('Sample')
@@ -623,7 +742,7 @@ def plot_results(results: Dict, output_dir: str, known_key: Optional[np.ndarray]
     ax.set_xticklabels([f'0x{k:02x}' for k in top_10_idx], rotation=45)
     
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, f'byte_{best_byte_idx}_detailed.png'), dpi=150)
+    plt.savefig(os.path.join(output_dir, f'byte_{best_byte_idx}_detailed.png'), dpi=100)
     plt.close()
     print(f"  Saved: byte_{best_byte_idx}_detailed.png")
     
@@ -698,16 +817,20 @@ Examples:
     
     print(f"  Found {len(vector_files)} vector files")
     
+    # Early limit if -n is specified (avoid parsing all files unnecessarily)
+    if args.num_traces and args.num_traces < len(vector_files):
+        vector_files = vector_files[:args.num_traces]
+        print(f"  Limiting to first {args.num_traces} vector files")
+    
     plaintexts = []
     known_key = None
     vector_indices = []
     
-    for vf in vector_files:
+    for vf in tqdm(vector_files, desc="Parsing vector files"):
         idx = int(re.search(r'vector_(\d+)\.h', vf).group(1))
         key, pt, ct = parse_header_file(vf)
         
         if pt is None:
-            print(f"  Warning: Could not parse {vf}")
             continue
         
         if known_key is None and key is not None:
@@ -728,7 +851,9 @@ Examples:
     print("\nStep 2: Loading traces...")
     
     trace_suffix = f'_{args.trace_type}.csv'
-    traces_list = []
+    
+    # First, discover all trace files
+    trace_files = []
     trace_indices = []
     
     for idx in vector_indices:
@@ -756,18 +881,32 @@ Examples:
             if matches:
                 trace_file = matches[0]
         
-        if trace_file is None:
-            continue
-        
-        trace = load_trace(trace_file)
-        if trace is not None:
-            traces_list.append(trace)
+        if trace_file is not None:
+            trace_files.append(trace_file)
             trace_indices.append(idx)
     
-    if not traces_list:
+    if not trace_files:
         print(f"Error: No trace files found in {args.traces_dir}")
         print(f"  Looking for files matching *{trace_suffix}")
         sys.exit(1)
+    
+    print(f"  Found {len(trace_files)} trace files")
+    
+    # Load traces in parallel
+    from multiprocessing import Pool
+    traces_list = []
+    valid_trace_indices = []
+    
+    with Pool(args.workers) as pool:
+        results = list(tqdm(pool.imap(_load_trace_worker, trace_files), 
+                           total=len(trace_files), desc="Loading traces"))
+    
+    for idx, trace in zip(trace_indices, results):
+        if trace is not None:
+            traces_list.append(trace)
+            valid_trace_indices.append(idx)
+    
+    trace_indices = valid_trace_indices
     
     print(f"  Loaded {len(traces_list)} traces")
     

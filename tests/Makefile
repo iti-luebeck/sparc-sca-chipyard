@@ -1,5 +1,5 @@
-GCC=riscv64-unknown-elf-gcc
-OBJDUMP=riscv64-unknown-elf-objdump
+GCC=/mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/binriscv64-unknown-elf-gcc
+OBJDUMP=/mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/binriscv64-unknown-elf-objdump
 CFLAGS= -std=gnu99 -O2 -fno-common -fno-builtin-printf -Wall
 LDFLAGS= -static
 
