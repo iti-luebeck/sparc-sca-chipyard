@@ -24,4 +24,6 @@ cellift-gemmini/sw/scenario_matmul_multi/matrix_*
 cellift-rocket/sw/scenario_aes128_multi/vector_*
 cellift-rocket/sw/scenario_aes128_multi/cpa_results_1000_all/
 cellift-rocket/sw/scenario_aes128_multi/cpa_results_1000
-/cellift-rocket/sw/scenario_aes128_multi/cpa_results_aligned_all_signals
+cellift-rocket/sw/scenario_aes128_multi/cpa_results_aligned_all_signals
+cellift-gemmini/sw/scenario_matmul_multi/test_patterns/
+cellift-gemmini/build_log.txt

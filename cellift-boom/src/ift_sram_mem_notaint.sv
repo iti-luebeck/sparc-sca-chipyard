@@ -59,7 +59,7 @@ module noift_sram_mem #(
         automatic int num_words = (section_len+(WidthBytes-1))/WidthBytes;
         sections[section_addr/WidthBytes] = num_words;
         // buffer = new [num_words*WidthBytes];
-        assert(num_words*WidthBytes >= PreloadBufferSize);
+        assert(num_words*WidthBytes <= PreloadBufferSize);
         void'(read_section(section_addr, buffer));
 
         for (int i = 0; i < num_words; i++) begin

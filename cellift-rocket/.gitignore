@@ -8,3 +8,12 @@ statistics
 result.txt
 modelsim
 project/
+# Simulation trace data (large CSVs, reproducible)
+results_*/
+# Analysis outputs
+*.npy
+*.png
+sw/*/build/
+# Python cache
+__pycache__/
+*.pyc

@@ -1,0 +1,45 @@
+CAPI=2:
+# Copyright 2022 Flavien Solt, ETH Zurich.
+# Licensed under the General Public License, Version 3.0, see LICENSE for details.
+# SPDX-License-Identifier: GPL-3.0-only
+name: "::run_cellift_csvlog:0.1"
+description: "Run CellIFT on instrumented Rocket, writing leakage counters to CSV each cycle"
+
+filesets:
+  files_cells:
+    files:
+      - generated/out/cellift.sv
+      - src/ift_sram_mem.sv
+      - src/top_tiny_soc_taints.sv
+    file_type: systemVerilogSource
+
+  files_dv:
+    files:
+      - $CELLIFT_DESIGN_PROCESSING_ROOT/common/dv/common_functions.cc
+      - $CELLIFT_DESIGN_PROCESSING_ROOT/common/dv/elf.h : {is_include_file: true}
+      - $CELLIFT_DESIGN_PROCESSING_ROOT/common/dv/taintloader.cc
+      - $CELLIFT_DESIGN_PROCESSING_ROOT/common/dv/elfloader.cc
+      - $CELLIFT_DESIGN_PROCESSING_ROOT/common/dv/ticks.h : {is_include_file: true}
+      - dv/testbench.h : {is_include_file: true}
+      - dv/toplevel_csv.cc
+    file_type: cppSource
+
+targets:
+  default:
+    default_tool: verilator
+    filesets:
+      - files_cells
+      - files_dv
+    toplevel: top_tiny_soc
+    tools:
+      verilator:
+        mode: cc
+        verilator_options:
+          - '--trace'
+          - '--trace-max-array 1024'
+          - '-CFLAGS "-std=c++11 -Wall -DTOPLEVEL_NAME=top_tiny_soc -O2"'
+          - '-LDFLAGS "-pthread -lutil"'
+          - "-Wall"
+          - "-Wno-PINCONNECTEMPTY"
+          - "-Wno-fatal"
+          - "-Wno-BLKANDNBLK"

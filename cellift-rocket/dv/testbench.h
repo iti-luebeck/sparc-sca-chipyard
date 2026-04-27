@@ -87,7 +87,10 @@ class Testbench {
 
 #if VM_TRACE
       trace_->dump(5 * tick_count_ + 2);
-      trace_->flush();
+#if !VM_TRACE_FST
+      trace_->flush();  // VCD only: per-tick flush. FST uses large auto-flush blocks;
+                        // per-tick fstWriterFlushContextPrivate() is 200x slower.
+#endif // !VM_TRACE_FST
 #endif // VM_TRACE
     }
   }

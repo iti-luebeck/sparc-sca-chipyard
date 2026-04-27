@@ -88,6 +88,10 @@ $(OUT_SV_TARGETS_NO_VANILLA): generated/out/%.sv: generated/out/%_precompact.sv 
 	$(PYTHON) $(CELLIFT_PYTHON_COMMON)/expand_right_operand.py $< generated/interm.sv
 	$(PYTHON) $(CELLIFT_PYTHON_COMMON)/compress_concats.py generated/interm.sv generated/interm.sv
 	$(PYTHON) $(CELLIFT_PYTHON_COMMON)/divide_concat_into_subconcats.py generated/interm.sv generated/interm.sv
+	if [ "$*" = "cellift" ]; then \
+		$(PYTHON) ../cellift-common/patch_tileprcidomain_taint.py generated/interm.sv generated/interm_patched.sv; \
+		mv generated/interm_patched.sv generated/interm.sv; \
+	fi
 	cat generated/interm.sv > $@
 	rm -f generated/interm.sv
 	cp $<.log $@.log
@@ -101,8 +105,8 @@ $(OUT_SV_TARGETS_NO_VANILLA): generated/out/%.sv: generated/out/%_precompact.sv 
 PREPARE_TARGETS_NOTRACE=$(patsubst %,prepare_%_notrace, $(TARGET_NAMES))
 PREPARE_TARGETS_TRACE=$(patsubst %,prepare_%_trace, $(TARGET_NAMES))
 PREPARE_TARGETS_TRACE_FST=$(patsubst %,prepare_%_trace_fst, $(TARGET_NAMES))
-.PHONY: $(PREPARE_TARGETS_NOTRACE)  
-$(PREPARE_TARGETS_NOTRACE) $(PREPARE_TARGETS_TRACE): prepare_%: build/run_%_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
+.PHONY: $(PREPARE_TARGETS_NOTRACE) $(PREPARE_TARGETS_TRACE) $(PREPARE_TARGETS_TRACE_FST)
+$(PREPARE_TARGETS_NOTRACE) $(PREPARE_TARGETS_TRACE) $(PREPARE_TARGETS_TRACE_FST): prepare_%: build/run_%_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
 
 # Actual targets
 
