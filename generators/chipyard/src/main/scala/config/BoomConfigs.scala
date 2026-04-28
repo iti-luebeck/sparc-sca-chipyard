@@ -141,12 +141,6 @@ class MySmallBoomConfig extends Config(
   new boom.common.WithNSmallBooms(1) ++                          // My small boom config
   new MySpecialConfig)
 
-// Small Rocket + Minimal Gemmini config for CellIFT
-class MySmallGemminiRocketConfig extends Config(
-  new gemmini.MinimalGemminiConfig ++                            // Minimal Gemmini (4x4 array, 16KB SP, no FP)
-  new WithMySmallVMRocketCores(1) ++                             // Small Rocket core with virtual memory
-  new MySpecialConfig)
-
 // ---------------------
 // BOOM Configs
 // ---------------------
