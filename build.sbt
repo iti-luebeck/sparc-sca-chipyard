@@ -30,12 +30,9 @@ lazy val commonSettings = Seq(
 
 val rocketChipDir = file("generators/rocket-chip")
 
-lazy val firesimAsLibrary = sys.env.get("FIRESIM_STANDALONE") == None
-lazy val firesimDir = if (firesimAsLibrary) {
-  file("sims/firesim/sim/")
-} else {
-  file("../../sim")
-}
+// FireSim/MIDAS removed — not needed for Rocket Verilog generation.
+// (sparc-sca-chipyard fork)
+
 
 /**
   * It has been a struggle for us to override settings in subprojects.
@@ -81,7 +78,6 @@ lazy val chiselTestSettings = Seq(libraryDependencies ++= Seq("edu.berkeley.cs" 
 // Rocket-chip dependencies (subsumes making RC a RootProject)
 lazy val hardfloat  = (project in rocketChipDir / "hardfloat")
   .settings(chiselSettings)
-  .dependsOn(midasTargetUtils)
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
@@ -132,9 +128,6 @@ lazy val rocketLibDeps = (rocketchip / Keys.libraryDependencies)
 
 // -- Chipyard-managed External Projects --
 
-// Contains annotations & firrtl passes you may wish to use in rocket-chip without
-// introducing a circular dependency between RC and MIDAS
-lazy val midasTargetUtils = ProjectRef(firesimDir, "targetutils")
 
 lazy val testchipip = (project in file("generators/testchipip"))
   .dependsOn(rocketchip, sifive_blocks)
@@ -190,7 +183,7 @@ lazy val sodor = (project in file("generators/riscv-sodor"))
   .settings(commonSettings)
 
 lazy val sha3 = (project in file("generators/sha3"))
-  .dependsOn(rocketchip, midasTargetUtils)
+  .dependsOn(rocketchip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(chiselTestSettings)
   .settings(commonSettings)
@@ -258,18 +251,8 @@ lazy val sifive_cache = (project in file("generators/sifive-cache"))
   .dependsOn(rocketchip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
 
-// Library components of FireSim
-lazy val midas      = ProjectRef(firesimDir, "midas")
-lazy val firesimLib = ProjectRef(firesimDir, "firesimLib")
-
-lazy val firechip = (project in file("generators/firechip"))
-  .dependsOn(chipyard, midasTargetUtils, midas, firesimLib % "test->test;compile->compile")
-  .settings(
-    chiselSettings,
-    commonSettings,
-    Test / testGrouping := isolateAllTests( (Test / definedTests).value ),
-    Test / testOptions += Tests.Argument("-oF")
-  )
+// FireSim/MIDAS components removed — not needed for Rocket Verilog generation.
+// (sparc-sca-chipyard fork)
 lazy val fpga_shells = (project in file("./fpga/fpga-shells"))
   .dependsOn(rocketchip, sifive_blocks)
   .settings(libraryDependencies ++= rocketLibDeps.value)
