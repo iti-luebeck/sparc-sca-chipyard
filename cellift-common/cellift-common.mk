@@ -1,4 +1,5 @@
 # Copyright 2022 Flavien Solt, ETH Zurich.
+# Copyright (C) 2024-2026 Andrija Neskovic, University of Luebeck
 # Licensed under the General Public License, Version 3.0, see LICENSE for details.
 # SPDX-License-Identifier: GPL-3.0-only
 
@@ -34,11 +35,20 @@ include $(CELLIFT_DESIGN_PROCESSING_ROOT)/common/design.mk
 before_instrumentation: generated/out/vanilla.sv
 
 #
-# 0. Generate the design sources sources
+# 0. Generate the Chipyard Verilog from Chisel/FIRRTL sources via SBT.
+#    The `verilog` target runs only Scala elaboration + FIRRTL compilation
+#    (no Verilator build), making it significantly faster than the default
+#    `make CONFIG=...` target while producing exactly the files we need.
+#    Triggered automatically by before_instrumentation when the files are absent.
 #
 
-#$(PATH_TO_DESIGN_VERILOG) $(PATH_TO_DESIGN_MEMS_VERILOG):
-#	make -C ../sims/verilator CONFIG=$(DESIGN_CONFIG)
+$(PATH_TO_DESIGN_VERILOG) $(PATH_TO_DESIGN_MEMS_VERILOG):
+	$(MAKE) -C ../sims/verilator verilog CONFIG=$(DESIGN_CONFIG)
+
+# Explicit phony to (re-)generate Chipyard Verilog when sources change.
+.PHONY: generate-chipyard-verilog
+generate-chipyard-verilog:
+	$(MAKE) -C ../sims/verilator verilog CONFIG=$(DESIGN_CONFIG)
 
 #
 # 1. Swap the AXI SRAM out for an AXI to mem converter followed by a blackbox mem.
@@ -184,3 +194,46 @@ STATISTICS_TARGETS=$(patsubst %,statistics/%.log, $(TARGET_NAMES))
 
 $(STATISTICS_TARGETS): statistics/%.log: $(CELLIFT_YS)/statistics.ys.tcl generated/out/vanilla.sv | statistics
 	DECOMPOSE_MEMORY=1 VERILOG_INPUT=$(word 2,$^) INSTRUMENTATION=$* TOP_MODULE=$(TOP_MODULE) $(CELLIFT_META_ROOT)/resourcewrapper $(RESOURCEWRAPPER_TAG) $* stat yosys -c $< -l $@
+
+# ── Evaluation simulators ─────────────────────────────────────────────────────
+# Copyright (C) 2024-2026 Andrija Neskovic, University of Luebeck
+#
+# These simulators are required by run_full_evaluation.sh and run_full_audit.sh.
+# Inherited by all chipyard designs (Rocket, BOOM) via this common mk file.
+# `make build-eval-sims` triggers the full chain: before_instrumentation →
+# Yosys pass → Python compaction → Verilator + FuseSoC compilation.
+
+EVAL_SIM_CSVLOG        = build/run_cellift_csvlog_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
+EVAL_SIM_FASTTRACE     = build/run_cellift_fasttrace_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
+EVAL_SIM_FASTTRACE_FST = build/run_cellift_fasttrace_fst_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
+EVAL_SIM_VANILLA       = build/run_vanilla_trace_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
+EVAL_SIM_VANILLA_FST   = build/run_vanilla_trace_fst_0.1/default-verilator/$(TOP_EXECUTABLE_NAME)
+
+.PHONY: build-eval-sims
+build-eval-sims: $(EVAL_SIM_CSVLOG) $(EVAL_SIM_FASTTRACE) $(EVAL_SIM_FASTTRACE_FST) \
+                 $(EVAL_SIM_VANILLA) $(EVAL_SIM_VANILLA_FST)
+
+$(EVAL_SIM_CSVLOG): generated/out/cellift.sv generated/out/cellift.sv.log | logs
+	rm -f fusesoc.conf
+	fusesoc library add run_cellift_csvlog .
+	fusesoc --cores-root=. run --build run_cellift_csvlog
+
+$(EVAL_SIM_FASTTRACE): generated/out/cellift.sv generated/out/cellift.sv.log | logs
+	rm -f fusesoc.conf
+	fusesoc library add run_cellift_fasttrace .
+	fusesoc --cores-root=. run --build run_cellift_fasttrace
+
+$(EVAL_SIM_FASTTRACE_FST): generated/out/cellift.sv generated/out/cellift.sv.log | logs
+	rm -f fusesoc.conf
+	fusesoc library add run_cellift_fasttrace_fst .
+	fusesoc --cores-root=. run --build run_cellift_fasttrace_fst
+
+$(EVAL_SIM_VANILLA): generated/out/vanilla.sv generated/out/vanilla.sv.log | logs
+	rm -f fusesoc.conf
+	fusesoc library add run_vanilla_trace .
+	fusesoc --cores-root=. run --build run_vanilla_trace
+
+$(EVAL_SIM_VANILLA_FST): generated/out/vanilla.sv generated/out/vanilla.sv.log | logs
+	rm -f fusesoc.conf
+	fusesoc library add run_vanilla_trace_fst .
+	fusesoc --cores-root=. run --build run_vanilla_trace_fst
