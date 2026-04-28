@@ -134,24 +134,65 @@ lazy val testchipip = (project in file("generators/testchipip"))
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 
-// sparc-sca-chipyard: only keep subprojects with initialized sources.
-// Removed: boom, hwacha, sha3, dsptools, rocket-dsp-utils, gemmini, icenet,
-//          tracegen, sodor, ibex (chipyard's), fft_generator, sifive_cache.
 lazy val chipyard = (project in file("generators/chipyard"))
-  .dependsOn(testchipip, rocketchip, sifive_blocks, iocell, cva6, nvdla)
+  .dependsOn(testchipip, rocketchip, boom, hwacha, sifive_blocks, sifive_cache, iocell,
+    sha3,
+    dsptools, `rocket-dsp-utils`,
+    gemmini, icenet, tracegen, cva6, nvdla, sodor, ibex, fft_generator)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 
-// boom, hwacha, fft_generator, tracegen, icenet removed — submodules not initialized.
-// (sparc-sca-chipyard fork)
+lazy val fft_generator = (project in file("generators/fft-generator"))
+  .dependsOn(rocketchip, `rocket-dsp-utils`)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val tracegen = (project in file("generators/tracegen"))
+  .dependsOn(testchipip, rocketchip, sifive_cache, boom)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val icenet = (project in file("generators/icenet"))
+  .dependsOn(testchipip, rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val hwacha = (project in file("generators/hwacha"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val boom = (project in file("generators/boom"))
+  .dependsOn(testchipip, rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
 
 lazy val cva6 = (project in file("generators/cva6"))
   .dependsOn(rocketchip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 
-// ibex (chipyard's), sodor, sha3, gemmini removed — submodules not initialized.
-// (sparc-sca-chipyard fork)
+lazy val ibex = (project in file("generators/ibex"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val sodor = (project in file("generators/riscv-sodor"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val sha3 = (project in file("generators/sha3"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(chiselTestSettings)
+  .settings(commonSettings)
+
+lazy val gemmini = (project in file("generators/gemmini"))
+  .dependsOn(testchipip, rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(chiselTestSettings)
+  .settings(commonSettings)
 
 lazy val nvdla = (project in file("generators/nvdla"))
   .dependsOn(rocketchip)
@@ -172,6 +213,19 @@ lazy val tapeout = (project in file("./tools/barstools/"))
   .enablePlugins(sbtassembly.AssemblyPlugin)
   .settings(commonSettings)
 
+lazy val dsptools = freshProject("dsptools", file("./tools/dsptools"))
+  .settings(
+    chiselSettings,
+    chiselTestSettings,
+    commonSettings,
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.2.+" % "test",
+      "org.typelevel" %% "spire" % "0.16.2",
+      "org.scalanlp" %% "breeze" % "1.1",
+      "junit" % "junit" % "4.13" % "test",
+      "org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
+  ))
+
 lazy val `api-config-chipsalliance` = freshProject("api-config-chipsalliance", file("./tools/api-config-chipsalliance"))
   .settings(
     commonSettings,
@@ -180,13 +234,22 @@ lazy val `api-config-chipsalliance` = freshProject("api-config-chipsalliance", f
       "org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
     ))
 
-// dsptools and rocket-dsp-utils removed — submodules not initialized.
-// (sparc-sca-chipyard fork)
+lazy val `rocket-dsp-utils` = freshProject("rocket-dsp-utils", file("./tools/rocket-dsp-utils"))
+  .dependsOn(rocketchip, `api-config-chipsalliance`, dsptools)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
 
 lazy val sifive_blocks = (project in file("generators/sifive-blocks"))
   .dependsOn(rocketchip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
 
-// sifive_cache, fpga_shells, fpga_platforms removed — submodules not initialized.
+lazy val sifive_cache = (project in file("generators/sifive-cache"))
+  .settings(
+    commonSettings,
+    Compile / scalaSource := baseDirectory.value / "design/craft")
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+
+// FireSim/MIDAS and FPGA targets not needed for RTL generation — removed.
 // (sparc-sca-chipyard fork)
