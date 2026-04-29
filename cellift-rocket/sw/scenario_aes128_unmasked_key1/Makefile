@@ -1,7 +1,7 @@
 # AES-128 Tainted Key Scenario - Rocket Core (RV64G)
 # Makefile for building the AES-128 encryption test binary
 
-RISCV_PREFIX ?= /mnt/nvme1n1p1/chipyard-1.11.0/.conda-env/riscv-tools/bin/riscv64-unknown-elf
+RISCV_PREFIX ?= $(if $(RISCV),$(RISCV)/bin/riscv64-unknown-elf,/mnt/nvme1n1p1/chipyard-1.11.0/.conda-env/riscv-tools/bin/riscv64-unknown-elf)
 
 # Rocket uses RV64G (RV64IMAFD)
 RV_ARCH_FLAGS ?= -march=rv64g -mabi=lp64

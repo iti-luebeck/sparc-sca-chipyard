@@ -54,7 +54,8 @@ SIGNAL_JSON="${OUT_PREFIX}_signals.json"
 INSTR_JSON="${OUT_PREFIX}_instructions.json"
 DATA_SIGNAL_JSON="${OUT_PREFIX}_data_signals.json"
 
-ENV_SH="/mnt/nvme1n1p1/cellift-meta-leakage/env.sh"
+: "${SPARC_SCA_ROOT:=$(cd "${SCRIPT_DIR}/../../.." && pwd)}"
+ENV_SH="${SPARC_SCA_ROOT}/env.sh"
 FAST_BIN="${SCRIPT_DIR}/build/run_cellift_fasttrace_0.1/default-verilator/Vtop_tiny_soc"
 FAST_BIN_FST="${SCRIPT_DIR}/build/run_cellift_fasttrace_fst_0.1/default-verilator/Vtop_tiny_soc"
 VANILLA_BIN="${SCRIPT_DIR}/build/run_vanilla_trace_0.1/default-verilator/Vtop_tiny_soc"
@@ -156,7 +157,9 @@ cleanup() {
 trap cleanup EXIT
 
 # ── Sanity checks ─────────────────────────────────────────────────────────────
-source "$ENV_SH"
+if [[ "${CELLIFT_ENV_SOURCED:-}" != "yes" ]]; then
+    source "$ENV_SH"
+fi
 
 # Decide FST vs VCD mode based on SIMLEN (applied to both fasttrace and vanilla).
 USE_FST=0
@@ -165,7 +168,7 @@ if [[ "$SIMLEN" -gt "$FST_SIMLEN_THRESHOLD" ]]; then
         USE_FST=1
     else
         echo "WARNING: SIMLEN=${SIMLEN} exceeds FST threshold=${FST_SIMLEN_THRESHOLD} but FST binary not found."
-        echo "         Run: cd ${SCRIPT_DIR} && source ${ENV_SH} && ./build_fasttrace_fst_sim.sh"
+        echo "         Run: cd ${SCRIPT_DIR} && make build/run_cellift_fasttrace_fst_0.1/default-verilator/Vtop_tiny_soc"
     fi
 fi
 

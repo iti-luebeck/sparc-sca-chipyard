@@ -63,7 +63,7 @@ CSV_BIN="${SCRIPT_DIR}/build/run_cellift_csvlog_0.1/default-verilator/Vtop_tiny_
 # ── Sanity checks ─────────────────────────────────────────────────────────────
 if [[ ! -x "$CSV_BIN" ]]; then
     echo "ERROR: CSV logger binary not found: $CSV_BIN"
-    echo "       Build it with: ./build_csvlog_sim.sh"
+    echo "       Build it with: make build/run_cellift_csvlog_0.1/default-verilator/Vtop_tiny_soc"
     exit 1
 fi
 

@@ -1,19 +1,23 @@
+# Build artifacts
 build/
 generated/
-logs
+logs/
 fusesoc.conf
-traces
-saves
-statistics
-result.txt
-modelsim
-project/
-# Simulation trace data (large CSVs, reproducible)
+# Simulation trace data
 results_*/
 # Analysis outputs
 *.npy
 *.png
-sw/*/build/
+*.log
 # Python cache
 __pycache__/
 *.pyc
+# FST/VCD traces
+*.fst
+*.vcd
+*.vcd.gz
+# Scenario build artifacts
+sw/*/build/
+# Generated scenario sets (recreated by gen_scenarios.py + compile_scenarios.sh)
+sw/multi_*/
+sw/_manifests/
