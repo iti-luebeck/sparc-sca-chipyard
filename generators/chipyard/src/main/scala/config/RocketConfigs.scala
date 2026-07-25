@@ -34,17 +34,9 @@ class HwachaRocketConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++
   new chipyard.config.AbstractConfig)
 
-// DOC include start: GemminiRocketConfig
-class GemminiRocketConfig extends Config(
-  new gemmini.DefaultGemminiConfig ++                            // use Gemmini systolic array GEMM accelerator
-  new freechips.rocketchip.subsystem.WithNBigCores(1) ++
-  new chipyard.config.AbstractConfig)
-// DOC include end: GemminiRocketConfig
-
-class FPGemminiRocketConfig extends Config(
-  new gemmini.GemminiFP32DefaultConfig ++                         // use FP32Gemmini systolic array GEMM accelerator
-  new freechips.rocketchip.subsystem.WithNBigCores(1) ++
-  new chipyard.config.AbstractConfig)
+// GemminiRocketConfig and FPGemminiRocketConfig removed: they require the
+// gemmini submodule, which SPARC-SCA intentionally leaves uninitialized
+// (see Makefile checkout-designs) since MySmallVMRocketConfig doesn't use it.
 
 
 // DOC include start: DmiRocket
@@ -119,12 +111,9 @@ class GB1MemoryRocketConfig extends Config(
   new freechips.rocketchip.subsystem.WithNBigCores(1) ++
   new chipyard.config.AbstractConfig)
 
-// DOC include start: Sha3Rocket
-class Sha3RocketConfig extends Config(
-  new sha3.WithSha3Accel ++                                // add SHA3 rocc accelerator
-  new freechips.rocketchip.subsystem.WithNBigCores(1) ++
-  new chipyard.config.AbstractConfig)
-// DOC include end: Sha3Rocket
+// Sha3RocketConfig removed: it requires the sha3 submodule, which SPARC-SCA
+// intentionally leaves uninitialized (see Makefile checkout-designs) since
+// MySmallVMRocketConfig doesn't use it.
 
 // DOC include start: InitZeroRocketConfig
 class InitZeroRocketConfig extends Config(

@@ -7,7 +7,6 @@ import freechips.rocketchip.tile._
 import freechips.rocketchip.diplomacy._
 
 import hwacha.{Hwacha}
-import gemmini._
 
 import chipyard.{TestSuitesKey, TestSuiteHelper}
 
@@ -71,17 +70,6 @@ class WithHwachaTest extends Config((site, here, up) => {
   }
 })
 
-/**
-  * The MultiRoCCGemmini fragment functions similarly to the
-  * WithMultiRoCCHwacha fragment defined above
-  */
-class WithMultiRoCCGemmini[T <: Data : Arithmetic, U <: Data, V <: Data](
-  harts: Int*)(gemminiConfig: GemminiArrayConfig[T,U,V] = GemminiConfigs.defaultConfig) extends Config((site, here, up) => {
-  case MultiRoCCKey => up(MultiRoCCKey, site) ++ harts.distinct.map { i =>
-    (i -> Seq((p: Parameters) => {
-      implicit val q = p
-      val gemmini = LazyModule(new Gemmini(gemminiConfig))
-      gemmini
-    }))
-  }
-})
+// WithMultiRoCCGemmini removed: it requires the gemmini submodule, which
+// SPARC-SCA intentionally leaves uninitialized (see Makefile checkout-designs)
+// since MySmallVMRocketConfig doesn't use it.
