@@ -1,0 +1,38 @@
+{
+  "pipeline": "core_tvla_root_cause",
+  "instrumentation": {
+    "fusesoc_target": "run_cellift_csvlog",
+    "sim_binary": "/workspace/designs/chipyard/cellift-rocket/build/run_cellift_csvlog_0.1/default-verilator/Vtop_tiny_soc",
+    "sim_binary_sha256": "c68437692790a8e68e91ef3768c446b8486e2a4d32ec5fda1af9410789b355aa",
+    "sim_binary_mtime_utc": "2026-10-27T14:50:52Z"
+  },
+  "workload": "aes",
+  "n_unmasked": 2,
+  "n_masked": 2,
+  "simlen": 3000,
+  "seed": 42,
+  "jobs": 16,
+  "threshold_t": 4.5,
+  "window_len": 5,
+  "attr_cycles_max": 24,
+  "interval_top_k": 8,
+  "unmasked": {
+    "first_hw_leak_cycle": 337,
+    "attribution_cycles": "337 617 618 635 636 667 668 717 718 838 848 866 867 900 1282 1283 1332 1333 2188 2189 2874 2875 2924 2925",
+    "attribution_simlen": 2989,
+    "signal_json": "/workspace/designs/chipyard/cellift-rocket/results/unmasked/signals_refined_signals.json",
+    "data_signal_json": "/workspace/designs/chipyard/cellift-rocket/results/unmasked/signals_refined_data_signals.json",
+    "instruction_json": "/workspace/designs/chipyard/cellift-rocket/results/unmasked/signals_refined_instructions.json",
+    "regions_json": "/workspace/designs/chipyard/cellift-rocket/results/unmasked/leakage_regions.json",
+    "regions_csv": "/workspace/designs/chipyard/cellift-rocket/results/unmasked/leakage_regions.csv"
+  },
+  "masked": {
+    "first_hw_leak_cycle": 295,
+    "attribution_cycles": "295 296 857 858 907 908 984 985 1042 1043 1108 1109 1332 1333 1364 1365 1456 1457 1803 1804 2362 2363 2462 2463",
+    "attribution_simlen": 2527,
+    "signal_json": "/workspace/designs/chipyard/cellift-rocket/results/masked/signals_refined_signals.json",
+    "instruction_json": "/workspace/designs/chipyard/cellift-rocket/results/masked/signals_refined_instructions.json",
+    "regions_json": "/workspace/designs/chipyard/cellift-rocket/results/masked/leakage_regions.json",
+    "regions_csv": "/workspace/designs/chipyard/cellift-rocket/results/masked/leakage_regions.csv"
+  }
+}

@@ -1,0 +1,347 @@
+{
+  "metadata": {
+    "tick_base": 7,
+    "tick_period": 5,
+    "formula": "vcd_time = tick_period * (tick_base + cycle)",
+    "vcd": "/workspace/designs/chipyard/cellift-rocket/traces/vanilla_scenario_aes128_masked_key.vcd",
+    "elf": "/workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/build/app.elf"
+  },
+  "cycles": [
+    {
+      "cycle": 295,
+      "vcd_time": 1510,
+      "fetch": {
+        "pc": "0x80000028",
+        "instruction": "lbu\tt6,0(t5)",
+        "source": "mask_loop  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/main.S:24"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000028",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 296,
+      "vcd_time": 1515,
+      "fetch": {
+        "pc": "0x80000028",
+        "instruction": "lbu\tt6,0(t5)",
+        "source": "mask_loop  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/main.S:24"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000028",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 857,
+      "vcd_time": 4320,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 858,
+      "vcd_time": 4325,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 907,
+      "vcd_time": 4570,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 908,
+      "vcd_time": 4575,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 984,
+      "vcd_time": 4955,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)"
+      }
+    },
+    {
+      "cycle": 985,
+      "vcd_time": 4960,
+      "fetch": {
+        "pc": "0x80000684",
+        "instruction": "sb\ta1,-1(a5)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1042,
+      "vcd_time": 5245,
+      "fetch": {
+        "pc": "0x8000069c",
+        "instruction": "lbu\ta5,256(a5)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:94"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x8000069c",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1043,
+      "vcd_time": 5250,
+      "fetch": {
+        "pc": "0x8000069c",
+        "instruction": "lbu\ta5,256(a5)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:94"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x8000069c",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1108,
+      "vcd_time": 5575,
+      "fetch": {
+        "pc": "0x800000fc",
+        "instruction": "addi\tt5,t5,4",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:74 (discriminator 2)"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x800000fc",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1109,
+      "vcd_time": 5580,
+      "fetch": {
+        "pc": "0x800000fc",
+        "instruction": "addi\tt5,t5,4",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:74 (discriminator 2)"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x800000fc",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1332,
+      "vcd_time": 6695,
+      "fetch": {
+        "pc": "0x800000d0",
+        "instruction": "andi\ta5,t4,3",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:80"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x800000cc",
+        "instruction": "bne\ta6,a5,800000bc <aes128_encrypt+0x54>"
+      }
+    },
+    {
+      "cycle": 1333,
+      "vcd_time": 6700,
+      "fetch": {
+        "pc": "0x800000d4",
+        "instruction": "beqz\ta5,80000650 <aes128_encrypt+0x5e8>",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:80"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x800000d0",
+        "instruction": "andi\ta5,t4,3"
+      }
+    },
+    {
+      "cycle": 1364,
+      "vcd_time": 6855,
+      "fetch": {
+        "pc": "0x800000f8",
+        "instruction": "addiw\tt4,t4,1",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:74 (discriminator 1)"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x800000f8",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1365,
+      "vcd_time": 6860,
+      "fetch": {
+        "pc": "0x800000dc",
+        "instruction": "lbu\ta1,-16(a5)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:99"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x800000f8",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1456,
+      "vcd_time": 7315,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1457,
+      "vcd_time": 7320,
+      "fetch": {
+        "pc": "0x80000680",
+        "instruction": "lbu\ta1,0(a1)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:90"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x80000680",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 1803,
+      "vcd_time": 9050,
+      "fetch": {
+        "pc": "0x800000c8",
+        "instruction": "sb\tt3,-1(a5)",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:77"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x800000c4",
+        "instruction": "addi\ta1,a1,1"
+      }
+    },
+    {
+      "cycle": 1804,
+      "vcd_time": 9055,
+      "fetch": {
+        "pc": "0x800000cc",
+        "instruction": "bne\ta6,a5,800000bc <aes128_encrypt+0x54>",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:76 (discriminator 2)"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x800000c8",
+        "instruction": "sb\tt3,-1(a5)"
+      }
+    },
+    {
+      "cycle": 2362,
+      "vcd_time": 11845,
+      "fetch": {
+        "pc": "0x8000068c",
+        "instruction": "sraiw\ta5,t4,0x2",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:94"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x80000688",
+        "instruction": "bne\ta6,a5,80000674 <aes128_encrypt+0x60c>"
+      }
+    },
+    {
+      "cycle": 2363,
+      "vcd_time": 11850,
+      "fetch": {
+        "pc": "0x8000068c",
+        "instruction": "sraiw\ta5,t4,0x2",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:94"
+      },
+      "retire": {
+        "retiring": true,
+        "pc": "0x8000068c",
+        "instruction": "sraiw\ta5,t4,0x2"
+      }
+    },
+    {
+      "cycle": 2462,
+      "vcd_time": 12345,
+      "fetch": {
+        "pc": "0x800000f8",
+        "instruction": "addiw\tt4,t4,1",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:74 (discriminator 1)"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x800000f8",
+        "instruction": null
+      }
+    },
+    {
+      "cycle": 2463,
+      "vcd_time": 12350,
+      "fetch": {
+        "pc": "0x800000f8",
+        "instruction": "addiw\tt4,t4,1",
+        "source": "aes128_encrypt  /workspace/designs/chipyard/cellift-rocket/sw/scenario_aes128_masked_key/aes128.c:74 (discriminator 1)"
+      },
+      "retire": {
+        "retiring": false,
+        "pc": "0x800000f8",
+        "instruction": null
+      }
+    }
+  ]
+}

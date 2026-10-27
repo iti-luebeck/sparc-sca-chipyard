@@ -1,0 +1,30 @@
+CellIFT TVLA Summary
+N_A=2  N_B=2  cycles=2995
+within_group_identical=True
+welch_threshold_raw=4.5
+welch_threshold_effective=4.500000
+multiple_comparison_correction=none
+alpha=0.05
+
+# Between-group comparison (key1 vs key2) — primary result
+[leakage_counter_t0]
+  first_leaky_cycle = none
+  leaky_cycle_count = 0
+  max_diff          = 0
+
+[hamming_weight_counter_t0]
+  first_leaky_cycle = 295
+  leaky_cycle_count = 1060
+  max_diff          = 110
+
+[hamming_distance_counter_t0]
+  first_leaky_cycle = 295
+  leaky_cycle_count = 122
+  max_diff          = 116
+
+# Welch t-test: not applicable
+#   All traces within each group are identical (var=0).
+#   This is expected: CellIFT aggregate counters (HW/HD/LC) depend
+#   on the key, not the plaintext.  Use between-group comparison above.
+#   For deterministic-safe per-cycle episodes/regimes run:
+#   python3 cycle_leakage_quantifier.py /workspace/designs/chipyard/cellift-rocket/results/masked --plot --out /workspace/designs/chipyard/cellift-rocket/results/masked/leakage

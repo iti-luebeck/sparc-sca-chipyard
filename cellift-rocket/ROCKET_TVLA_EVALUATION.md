@@ -6,8 +6,8 @@ Scope: TVLA decision + root-cause signal analysis + instruction mapping
 ## 1) Environment
 
 ```bash
-source /mnt/nvme1n1p1/cellift-meta-leakage/env.sh
-cd /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-rocket
+source env.sh
+cd designs/chipyard/cellift-rocket
 ```
 
 ## 2) Rocket vs Ibex/Proteus Differences

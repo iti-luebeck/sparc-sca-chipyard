@@ -1,7 +1,11 @@
 # AES-128 Tainted Key Scenario - Rocket Core (RV64G)
 # Makefile for building the AES-128 encryption test binary
 
-RISCV_PREFIX ?= $(if $(RISCV),$(RISCV)/bin/riscv64-unknown-elf,/mnt/nvme1n1p1/chipyard-1.11.0/.conda-env/riscv-tools/bin/riscv64-unknown-elf)
+# Toolchain: $RISCV is set inside Docker and by env.sh.  SPARC_SCA_RISCV_BIN is
+# an escape hatch for a toolchain installed elsewhere (e.g. a Chipyard conda
+# env); otherwise riscv64-unknown-elf-* is resolved from PATH, so a native
+# install works without editing this file.
+RISCV_PREFIX ?= $(if $(RISCV),$(RISCV)/bin/riscv64-unknown-elf,$(if $(SPARC_SCA_RISCV_BIN),$(SPARC_SCA_RISCV_BIN)/riscv64-unknown-elf,riscv64-unknown-elf))
 
 # Rocket uses RV64G (RV64IMAFD)
 RV_ARCH_FLAGS ?= -march=rv64g -mabi=lp64

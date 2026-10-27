@@ -35,7 +35,7 @@ targets:
       verilator:
         mode: cc
         verilator_options:
-          - '-CFLAGS "-std=c++11 -Wall -DIS_VANILLA -DSYNTHESIS -DTOPLEVEL_NAME=top_tiny_soc -g -I$(RISCV)/include -O0"'
+          - '-CFLAGS "-std=c++11 -Wall -DIS_VANILLA -DSYNTHESIS -DTOPLEVEL_NAME=top_tiny_soc -g -I$(RISCV)/include -O2"'
           - '-DSTOP_COND=0'
           - '-LDFLAGS "-pthread -lutil"'
           - "-Wall"

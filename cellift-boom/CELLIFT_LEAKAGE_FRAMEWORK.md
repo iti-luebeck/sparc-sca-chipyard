@@ -202,7 +202,7 @@ make
 ```
 
 Requires the RISC-V toolchain at:
-`/mnt/nvme1n1p1/chipyard-1.11.0/.conda-env/riscv-tools/bin/riscv64-unknown-elf-gcc`
+`$RISCV/bin/riscv64-unknown-elf-gcc`
 
 ---
 
@@ -212,13 +212,13 @@ Requires the RISC-V toolchain at:
 
 ```bash
 # Source the CellIFT environment (provides correct libstdc++, Verilator paths)
-source /mnt/nvme1n1p1/cellift-meta-leakage/env.sh
+source env.sh
 ```
 
 ### Running a simulation
 
 ```bash
-cd /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-boom
+cd designs/chipyard/cellift-boom
 
 SIMLEN=100000 \
 SIMSRAMELF=sw/scenario_aes128_masked_key/build/app.elf \
@@ -408,8 +408,8 @@ phase shows D_avg = 0.00 (no per-execution key dependence).
 ### Full TVLA experiment
 
 ```bash
-source /mnt/nvme1n1p1/cellift-meta-leakage/env.sh
-cd /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-boom
+source env.sh
+cd designs/chipyard/cellift-boom
 
 # 1. Build software (if not already built)
 (cd sw/scenario_aes128_masked_key && make)

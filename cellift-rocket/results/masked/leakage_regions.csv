@@ -1,0 +1,17 @@
+counter,basis,region_id,start_cycle,end_cycle,duration,peak_cycle,peak_magnitude,peak_cohens_d,peak_welch_t,regime
+hamming_weight_counter_t0,episode,0,295,296,2,295,38,1000,nan,det_leak
+hamming_weight_counter_t0,episode,1,857,1116,260,1042,52,1000,nan,det_leak
+hamming_weight_counter_t0,episode,2,1332,1464,133,1364,55,1000,nan,det_leak
+hamming_weight_counter_t0,episode,3,1803,2470,668,2462,110,1000,nan,det_leak
+hamming_distance_counter_t0,episode,0,295,296,2,296,30,1000,nan,det_leak
+hamming_distance_counter_t0,episode,1,857,866,10,858,116,1000,nan,det_leak
+hamming_distance_counter_t0,episode,2,907,927,21,908,112,1000,nan,det_leak
+hamming_distance_counter_t0,episode,3,984,993,10,985,108,1000,nan,det_leak
+hamming_distance_counter_t0,episode,4,1042,1051,10,1043,98,1000,nan,det_leak
+hamming_distance_counter_t0,episode,5,1108,1117,10,1109,108,1000,nan,det_leak
+hamming_distance_counter_t0,episode,6,1332,1341,10,1333,110,1000,nan,det_leak
+hamming_distance_counter_t0,episode,7,1364,1373,10,1365,106,1000,nan,det_leak
+hamming_distance_counter_t0,episode,8,1456,1465,10,1457,106,1000,nan,det_leak
+hamming_distance_counter_t0,episode,9,1803,1812,10,1804,98,1000,nan,det_leak
+hamming_distance_counter_t0,episode,10,2362,2371,10,2363,106,1000,nan,det_leak
+hamming_distance_counter_t0,episode,11,2462,2471,10,2463,110,1000,nan,det_leak

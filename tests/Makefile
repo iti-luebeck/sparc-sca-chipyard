@@ -1,5 +1,9 @@
-GCC=/mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/binriscv64-unknown-elf-gcc
-OBJDUMP=/mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/binriscv64-unknown-elf-objdump
+# Toolchain: $RISCV is set inside Docker and by env.sh.  SPARC_SCA_RISCV_BIN is
+# an escape hatch for a toolchain installed elsewhere (e.g. a Chipyard conda
+# env); otherwise riscv64-unknown-elf-* is resolved from PATH, so a native
+# install works without editing this file.
+GCC = $(if $(RISCV),$(RISCV)/bin/riscv64-unknown-elf,$(if $(SPARC_SCA_RISCV_BIN),$(SPARC_SCA_RISCV_BIN)/riscv64-unknown-elf,riscv64-unknown-elf))-gcc
+OBJDUMP = $(if $(RISCV),$(RISCV)/bin/riscv64-unknown-elf,$(if $(SPARC_SCA_RISCV_BIN),$(SPARC_SCA_RISCV_BIN)/riscv64-unknown-elf,riscv64-unknown-elf))-objdump
 CFLAGS= -std=gnu99 -O2 -fno-common -fno-builtin-printf -Wall
 LDFLAGS= -static
 

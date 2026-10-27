@@ -129,7 +129,7 @@ The Makefile automatically:
 
 Uses the RISC-V toolchain from Chipyard:
 ```
-/mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/bin/riscv64-unknown-elf-
+$RISCV/bin/riscv64-unknown-elf-
 ```
 
 Adjust `TOOLCHAIN_PREFIX` in Makefile if using a different installation.
@@ -219,14 +219,14 @@ This allows you to verify that:
 
 Ensure you have the Chipyard toolchain installed:
 ```bash
-ls /mnt/nvme1n1p1/chipyard-1.8.1/.conda-env/riscv-tools/bin/
+ls $RISCV/bin/
 ```
 
 ### Simulator Not Found
 
 Build the simulators:
 ```bash
-cd /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-gemmini
+cd designs/chipyard/cellift-gemmini
 make build/run_vanilla_trace_0.1/default-verilator/Vtop_tiny_soc
 make build/run_cellift_trace_0.1/default-verilator/Vtop_tiny_soc
 ```

@@ -11,7 +11,11 @@
 #   make clean                # Remove all build artifacts
 
 # Toolchain from esp-tools (matches working Gemmini headers)
-TOOLCHAIN_PREFIX ?= /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/esp-tools-install/bin/riscv64-unknown-elf-
+# Toolchain: $RISCV is set inside Docker and by env.sh.  SPARC_SCA_RISCV_BIN is
+# an escape hatch for a toolchain installed elsewhere (e.g. a Chipyard conda
+# env); otherwise riscv64-unknown-elf-* is resolved from PATH, so a native
+# install works without editing this file.
+TOOLCHAIN_PREFIX ?= $(if $(RISCV),$(RISCV)/bin/riscv64-unknown-elf,$(if $(SPARC_SCA_RISCV_BIN),$(SPARC_SCA_RISCV_BIN)/riscv64-unknown-elf,riscv64-unknown-elf))-
 
 CC = $(TOOLCHAIN_PREFIX)gcc
 AS = $(TOOLCHAIN_PREFIX)gcc

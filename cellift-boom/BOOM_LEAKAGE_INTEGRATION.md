@@ -101,7 +101,7 @@ sw/scenario_aes128_masked_key/
 ### Step 1: Instrument with Yosys (cellift-meta-leakage/)
 
 ```bash
-cd /mnt/nvme1n1p1/cellift-meta-leakage/tools/cellift-yosys
+cd tools/sparc-sca-yosys
 make install PREFIX=$PREFIX_CELLIFT
 
 # Verify cellift.so has leakage support
@@ -112,7 +112,7 @@ strings $PREFIX_CELLIFT/bin/cellift.so | grep -c "track_power_leakage"
 ### Step 2: Generate Design (cellift-boom/)
 
 ```bash
-cd /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-boom
+cd designs/chipyard/cellift-boom
 
 # Build with leakage instrumentation
 export INSTRUMENTATION=cellift
@@ -154,7 +154,7 @@ ls -lh simulation.fst
 ### Step 5: Extract Leakage (cellift-meta-leakage/)
 
 ```bash
-cd /mnt/nvme1n1p1/cellift-meta-leakage/analysis
+cd analysis
 
 python extract_leakage_traces.py \
     --trace /path/to/simulation.fst \
@@ -286,7 +286,7 @@ To extend: Change to 64-bit or add saturation logic
 ### Sanity Check: Can You Build?
 
 ```bash
-cd /mnt/nvme1n1p1/cellift-designs/cellift-chipyard/cellift-boom
+cd designs/chipyard/cellift-boom
 
 # 1. Verify wrapper exists
 [ -f src/top_tiny_soc_with_leakage.sv ] && echo "✓ Wrapper present"
