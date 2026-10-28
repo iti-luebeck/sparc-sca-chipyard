@@ -14,7 +14,7 @@
 # Mark matrix B *source* as tainted at 0x800001c8 (test_matrix_B in .rodata)
 # For 4x4 int8_t matrix: 16 bytes
 # This ensures Gemmini DMA reads tainted data directly from the source
-0 800001c8 16 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+0 800001c8 16 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 
 # Note: Matrix A (input) is NOT tainted - the computation depends on both inputs
 # but we're interested in tracking how matrix B's (weight) taint propagates through the system
